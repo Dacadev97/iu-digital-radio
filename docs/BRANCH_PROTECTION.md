@@ -62,6 +62,29 @@ Flujo normal: PR + CI verde. Si Code Owners se bloquea a sí mismo (cuenta perso
 1. Pattern `main`: PR required, 1 approval, Code Owners, Dismiss stale, **Do not include administrators** (`enforce_admins: false`), status checks (`Assemble debug APK`, `Android Lint`), Block force pushes / deletions, Require conversation resolution.
 2. Pattern `develop`: Allow force pushes **off**, Allow deletions **off**; no exigir PR.
 
+## Identidad Git (sin Cursor Agent en contributors)
+
+Author/committer unificado en este repo:
+
+```bash
+git config user.name "Davidson Cadavid"
+git config user.email "149860458+Dacadev97@users.noreply.github.com"
+```
+
+(Compañeros de la célula: usen **su** nombre + email noreply de GitHub.)
+
+### Evitar `Co-authored-by: Cursor <cursoragent@cursor.com>`
+
+Ese trailer hace que GitHub liste **cursoragent / Cursor Agent** en Contributors aunque el author sea Davidson. Tras un rewrite de ramas, los commits viejos **siguen vivos** en `refs/pull/*/head` (read-only) y GitHub no deja borrarlos.
+
+**En Cursor IDE (Davidson / quien use Agent):**
+
+1. Cursor Settings → busca *co-author* / *Attribution* / *Agent commit*.
+2. Desactiva la opción que añade automáticamente `Co-authored-by: Cursor` a los commits (nombre exacto varía por versión).
+3. Antes de push, revisa: `git log -1 --format='%B'` — no debe aparecer esa línea.
+
+Si ya se coló en un commit local: `git commit --amend` **solo si no está en remoto compartido**, o un commit nuevo sin el trailer (nunca reescribir `develop`/`main` compartidos).
+
 ## Otras restricciones recomendadas
 
 Ver [CONTRIBUTING.md](../CONTRIBUTING.md#política-de-ramas-célula-f30).

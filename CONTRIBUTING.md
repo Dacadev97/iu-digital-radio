@@ -103,6 +103,7 @@ Documento completo: [docs/BRANCH_PROTECTION.md](docs/BRANCH_PROTECTION.md).
 - No “suavizar” asserts del contrato TDD para pasar CI.
 - Borrar `feature/*` tras merge; no tocar `main`/`develop` desde el cliente Git.
 - Coordinar deps compartidas (Compose/Media3) en el issue o un PR de plataforma.
+- **No** incluir trailers `Co-authored-by: Cursor` (ensucia Contributors). Si usas Cursor Agent: desactiva la co-autoría automática en Settings del IDE — detalle en [docs/BRANCH_PROTECTION.md](docs/BRANCH_PROTECTION.md#identidad-git-sin-cursor-agent-en-contributors).
 
 ## 7. Pull Request — checklist
 
