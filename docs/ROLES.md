@@ -5,7 +5,7 @@ Roles de la guía del tutor, repartidos **dentro de la misma célula** (un repo,
 
 | Quién | Qué cubre |
 |-------|-----------|
-| **Davidson Cadavid** (`@Dacadev97`) | **PO + PM + DevOps** (Product Owner, Project Manager, CI/CD, board, approvals, release/APK). Incluye el rol guía **QA & DevOps / Release**. |
+| **Davidson Cadavid** (`@Dacadev97`) | **PO + PM + QA + DevOps** — Product Owner, Project Manager, QA automation/smoke y DevOps/Release (CI, board, approvals, APK). Cubre el rol guía **QA & DevOps / Release**. |
 | Compañeros de la célula | UI, Hardware, State, Audio (según issue asignado) |
 
 **Board:** https://github.com/users/Dacadev97/projects/4
@@ -26,7 +26,8 @@ Antes de codear: elige un rol libre → reclama el issue en el board → **pon t
 | Audio & API | _pendiente_ | #7 | |
 | PO (Product Owner) | Davidson Cadavid | Backlog, prioridades, AC | Dacadev97 |
 | PM (Project Manager) | Davidson Cadavid | Board, kickoff #17, seguimiento | Dacadev97 |
-| DevOps / Release (+ QA) | Davidson Cadavid | CI, APK, #11 #12, approvals | Dacadev97 |
+| QA (Quality Assurance) | Davidson Cadavid | Checklist, smoke #11, gate Testing | Dacadev97 |
+| DevOps / Release | Davidson Cadavid | CI, APK #12, approvals, repo | Dacadev97 |
 
 ---
 
@@ -38,7 +39,8 @@ Antes de codear: elige un rol libre → reclama el issue en el board → **pon t
 | Hardware & Permissions | `role-hardware` | #2, #3, #5 | UI, State |
 | State & Logic | `role-state` | #4 | UI, Audio, Hardware |
 | Audio & API | `role-audio` | #7 | State, UI |
-| DevOps / Release (+ QA) | `role-qa-devops` | #11, #12 | Toda la célula (smoke/release) |
+| QA | `role-qa-devops` | #11, checklist | Toda la célula (Testing) |
+| DevOps / Release | `role-qa-devops` | #12, CI, APK | Toda la célula |
 | PO + PM | `role-po` | Board, #17, backlog | Toda la célula |
 
 Issues cerrados de plataforma (#8–#10) y TDD históricos (#13–#14) **ya están hechos** — no los tomen.  
@@ -118,7 +120,7 @@ Mapa issue → rol: [PARA_EL_EQUIPO.md](PARA_EL_EQUIPO.md).
 
 ---
 
-## DevOps / Release (+ QA) (`role-qa-devops`) — Davidson
+## QA + DevOps / Release (`role-qa-devops`) — Davidson
 
 **También:** PO + PM (ver sección siguiente).
 
@@ -138,9 +140,9 @@ Mapa issue → rol: [PARA_EL_EQUIPO.md](PARA_EL_EQUIPO.md).
 
 ---
 
-## PO + PM (`role-po`) — Davidson
+## PO + PM + QA + DevOps (`role-po` / `role-qa-devops`) — Davidson
 
-En esta célula **Davidson** es **Product Owner** y **Project Manager**, además de DevOps:
+En esta célula **Davidson** asume **cuatro roles**:
 
 **PO (Product Owner)**
 
@@ -153,7 +155,17 @@ En esta célula **Davidson** es **Product Owner** y **Project Manager**, además
 - Desbloquear dependencias entre roles de la célula.
 - Asegurar integración en `develop` antes de Canvas.
 - Coordinar documento escrito / video con el equipo.
----
+
+**QA (Quality Assurance)**
+
+- Mantener [QA_CHECKLIST.md](QA_CHECKLIST.md) y el gate de la columna **Testing**.
+- Smoke en emulador/dispositivo (#11) cuando el MVP esté integrado.
+- No mergear a `main` si CI o smoke fallan.
+
+**DevOps / Release**
+
+- CI Actions, release APK (#12), CODEOWNERS, invitaciones al repo privado.
+- Único aprobador de merges a `main`.
 
 ## Contratos técnicos (punto de partida)
 
