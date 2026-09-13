@@ -21,8 +21,10 @@ App Android (**Kotlin**) — Evidencia **F30** · IU Digital de Antioquia · mod
 
 1. Confirma que te invitaron al repo (si no, pide acceso a Davidson).
 2. Lee **[docs/ONBOARDING.md](docs/ONBOARDING.md)** (5 minutos).
-3. Elige tu rol en **[docs/ROLES.md](docs/ROLES.md)**.
-4. Sigue **[CONTRIBUTING.md](CONTRIBUTING.md)** para setup + primera PR.
+3. Elige tu rol en **[docs/ROLES.md](docs/ROLES.md)**, reclama el issue y **pon tu nombre en la tabla** de ese doc.
+4. Crea tu rama y sigue **[CONTRIBUTING.md](CONTRIBUTING.md)** para setup + primera PR.
+
+> **Antes de codear:** elige rol → reclama issue → pon tu nombre en [ROLES.md](docs/ROLES.md) → crea rama.
 
 ## Cómo elegir tu issue
 

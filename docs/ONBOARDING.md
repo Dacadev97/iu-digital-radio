@@ -15,14 +15,16 @@ Guía corta (≈10 min) · F30 · **modalidad célula** (4–6 personas).
 
 0. **Acceso:** acepta la invitación al repo privado (si no llega, pide a Davidson que te agregue en Settings → Collaborators).  
 1. **Board de la célula:** https://github.com/users/Dacadev97/projects/4  
-2. **Tu rol:** [ROLES.md](ROLES.md) — issues y Definition of Done.  
-3. **Filtra** por label `role-*` (ej. `role-ui`).  
-4. **Toma tu issue**, asígnatelo → **In Progress**.  
-5. **Setup:** [CONTRIBUTING.md](../CONTRIBUTING.md) (clone → `develop` → rama).  
+2. **Elige tu rol** en [ROLES.md](ROLES.md) (issues y Definition of Done).  
+3. **Reclama el issue:** filtra por label `role-*` (ej. `role-ui`), asígnatelo → **In Progress**.  
+4. **Pon tu nombre** en la tabla *Quién toma qué rol* de [ROLES.md](ROLES.md) (PR a `develop` o comentario en el issue; no borres filas).  
+5. **Setup + rama:** [CONTRIBUTING.md](../CONTRIBUTING.md) (clone → `develop` → `feature/<rol>-…`).  
 6. Corre `./gradlew testDebugUnitTest` — **debe fallar**. Eso es el Red del TDD.  
 7. Implementa hasta verdear **tus** tests; coordina con el compañero si hay dependencia.  
 8. Abre PR a `develop` → tarjeta **Testing** (Davidson revisa/aprueba).  
 9. Tras merge → **Done**. No pushees a `main`.
+
+> **Antes de codear:** elige rol → reclama issue → **pon tu nombre en la tabla de ROLES.md** → crea rama.
 
 ## Mapa rápido de carpetas
 
