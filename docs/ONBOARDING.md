@@ -8,7 +8,7 @@ Guía corta (≈10 min) · F30 · **modalidad célula** (4–6 personas).
 - Cada compañero toma **su issue** según el **rol** que le tocó en la célula.
 - Este repo es **nuestra casa** (**privado**): solo trae DevOps (CI, APK) + **tests en rojo** (contrato TDD).
 - Tú implementas el producto en una rama `feature/*` y lo entregas por **Pull Request** a `develop` (o push a `develop` si ya coordinaron; **nunca a `main`**).
-- **Davidson** (`@Dacadev97`) = único que **aprueba** PRs / mergea a `main`. También QA & DevOps / Release (+ PO/board/CI). Invita a la célula en **Settings → Collaborators**.
+- **Davidson** (`@Dacadev97`) = **PO + PM + DevOps** (prioridades, board, CI/APK, aprueba PRs / mergea `main`). Incluye QA & Release de la guía. Invita a la célula en **Settings → Collaborators**.
 - Detalle de reglas: [BRANCH_PROTECTION.md](BRANCH_PROTECTION.md).
 
 ## Checklist del día 1

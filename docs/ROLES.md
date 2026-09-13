@@ -5,7 +5,7 @@ Roles de la guía del tutor, repartidos **dentro de la misma célula** (un repo,
 
 | Quién | Qué cubre |
 |-------|-----------|
-| **Davidson Cadavid** | **QA & DevOps / Release** + PO/board/CI (bootstrap del repo) |
+| **Davidson Cadavid** (`@Dacadev97`) | **PO + PM + DevOps** (Product Owner, Project Manager, CI/CD, board, approvals, release/APK). Incluye el rol guía **QA & DevOps / Release**. |
 | Compañeros de la célula | UI, Hardware, State, Audio (según issue asignado) |
 
 **Board:** https://github.com/users/Dacadev97/projects/4
@@ -24,8 +24,9 @@ Antes de codear: elige un rol libre → reclama el issue en el board → **pon t
 | State & Logic | _pendiente_ | #4 | |
 | Hardware & Permissions | _pendiente_ | #2 #3 #5 | |
 | Audio & API | _pendiente_ | #7 | |
-| QA & DevOps / Release | Davidson Cadavid | PLAT / CI (#11 #12) | Dacadev97 |
-| PO / Tech Lead (coordinación) | Davidson Cadavid | board | Dacadev97 |
+| PO (Product Owner) | Davidson Cadavid | Backlog, prioridades, AC | Dacadev97 |
+| PM (Project Manager) | Davidson Cadavid | Board, kickoff #17, seguimiento | Dacadev97 |
+| DevOps / Release (+ QA) | Davidson Cadavid | CI, APK, #11 #12, approvals | Dacadev97 |
 
 ---
 
@@ -37,8 +38,8 @@ Antes de codear: elige un rol libre → reclama el issue en el board → **pon t
 | Hardware & Permissions | `role-hardware` | #2, #3, #5 | UI, State |
 | State & Logic | `role-state` | #4 | UI, Audio, Hardware |
 | Audio & API | `role-audio` | #7 | State, UI |
-| QA & DevOps / Release | `role-qa-devops` | #11, #12 | Toda la célula (smoke/release) |
-| PO / coordinación | `role-po` | Board | Toda la célula |
+| DevOps / Release (+ QA) | `role-qa-devops` | #11, #12 | Toda la célula (smoke/release) |
+| PO + PM | `role-po` | Board, #17, backlog | Toda la célula |
 
 Issues cerrados de plataforma (#8–#10) y TDD históricos (#13–#14) **ya están hechos** — no los tomen.  
 Trabajo de producto: **#1–#7**. Primer paso de la célula: **[#17 Kickoff](https://github.com/Dacadev97/iu-digital-radio/issues/17)**.  
@@ -117,15 +118,18 @@ Mapa issue → rol: [PARA_EL_EQUIPO.md](PARA_EL_EQUIPO.md).
 
 ---
 
-## QA & DevOps / Release (`role-qa-devops`) — Davidson
+## DevOps / Release (+ QA) (`role-qa-devops`) — Davidson
+
+**También:** PO + PM (ver sección siguiente).
 
 **Issues:** [#11 PLAT-04](https://github.com/Dacadev97/iu-digital-radio/issues/11), [#12 PLAT-05](https://github.com/Dacadev97/iu-digital-radio/issues/12)
 
 **Qué hacer**
 
-- Mantener CI y el board de la célula.
+- Mantener CI, ramas y el board de la célula.
 - Smoke con [QA_CHECKLIST.md](QA_CHECKLIST.md) cuando el MVP esté integrado.
 - Distribuir APK (workflow **Release APK** + Drive del grupo).
+- Aprobar PRs / merge a `main` (único Code Owner).
 
 **DoD**
 
@@ -134,13 +138,21 @@ Mapa issue → rol: [PARA_EL_EQUIPO.md](PARA_EL_EQUIPO.md).
 
 ---
 
-## PO / coordinación (`role-po`)
+## PO + PM (`role-po`) — Davidson
 
-En esta célula lo cubre **Davidson** junto a DevOps/QA:
+En esta célula **Davidson** es **Product Owner** y **Project Manager**, además de DevOps:
 
-- Priorizar board, desbloquear dependencias entre roles.
-- Asegurar integración en `develop` antes de la entrega Canvas.
+**PO (Product Owner)**
 
+- Priorizar backlog RF-01…07 y AC.
+- Definir qué entra en el MVP de entrega.
+
+**PM (Project Manager)**
+
+- Kickoff [#17](https://github.com/Dacadev97/iu-digital-radio/issues/17), seguimiento del board (Todo → In Progress → Testing → Done).
+- Desbloquear dependencias entre roles de la célula.
+- Asegurar integración en `develop` antes de Canvas.
+- Coordinar documento escrito / video con el equipo.
 ---
 
 ## Contratos técnicos (punto de partida)

@@ -1,6 +1,7 @@
 # Backlog F30 — IU Digital Radio (TDD)
 
-**QA & DevOps / Release:** Davidson Cadavid  
+**PO + PM + DevOps:** Davidson Cadavid  
+**QA & Release (guía):** cubierto por el mismo rol DevOps  
 **Modalidad:** Célula (Opción A1 · 4–6)  
 **Board:** https://github.com/users/Dacadev97/projects/4  
 **Definition of Ready:** issue RF + test `Rf0X` en rojo + AC claros.  

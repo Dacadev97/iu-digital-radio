@@ -13,7 +13,7 @@ App Android (**Kotlin**) — Evidencia **F30** · IU Digital de Antioquia · mod
 | **Documento escrito de la célula** | [Google Docs](https://docs.google.com/document/d/1A2VFSnmZf0X946tLOFOfcxVCrduWtBdiIYpUAiPPZgo/edit?usp=sharing) → PDF técnico Canvas |
 | Issues | https://github.com/Dacadev97/iu-digital-radio/issues |
 | Actions (CI) | https://github.com/Dacadev97/iu-digital-radio/actions |
-| QA & DevOps / Release | **Davidson Cadavid** |
+| PO + PM + DevOps | **Davidson Cadavid** (`@Dacadev97`) |
 
 > **Visibilidad:** el repositorio es **privado**. Cada integrante de la célula necesita invitación como collaborator  
 > (GitHub → **Settings → Collaborators** → *Add people*). Sin invitación no podrán clonar ni abrir PRs.
