@@ -1,5 +1,5 @@
 name: User Story / Feature
-description: Historia de usuario o feature del backlog PO
+description: Historia de usuario o feature del backlog (célula)
 labels: ["enhancement", "po"]
 body:
   - type: input
@@ -20,11 +20,11 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: squad
+    id: cell_role
     attributes:
-      label: Squad responsable
+      label: Rol en la célula
       options:
-        - PO / Tech Lead
+        - PO / coordinación
         - UI/UX Compose
         - State & Logic
         - Hardware & Permissions

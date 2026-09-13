@@ -1,22 +1,27 @@
-# Roles — Software House F30
+# Roles — Célula F30
 
-Modalidad de la guía: equipos por especialidad.  
-**PO / DevOps / QA (bootstrap):** Davidson Cadavid.
+**Modalidad:** Célula (Opción A1 · Software House en célula de **4–6**).  
+Roles de la guía del tutor, repartidos **dentro de la misma célula** (un repo, colaboración cercana).
 
-Board: https://github.com/users/Dacadev97/projects/4
+| Quién | Qué cubre |
+|-------|-----------|
+| **Davidson Cadavid** | **QA & DevOps / Release** + PO/board/CI (bootstrap del repo) |
+| Compañeros de la célula | UI, Hardware, State, Audio (según issue asignado) |
+
+**Board:** https://github.com/users/Dacadev97/projects/4
 
 ## Resumen
 
-| Rol | Label | Issues abiertos | Colabora con |
-|-----|-------|-----------------|--------------|
+| Rol en la célula | Label | Issues abiertos | Colabora con |
+|------------------|-------|-----------------|--------------|
 | UI/UX Compose | `role-ui` | #1, #6 | State, Audio |
 | Hardware & Permissions | `role-hardware` | #2, #3, #5 | UI, State |
 | State & Logic | `role-state` | #4 | UI, Audio, Hardware |
 | Audio & API | `role-audio` | #7 | State, UI |
-| QA & DevOps / Release | `role-qa-devops` | #11, #12 | Todos (smoke/release) |
-| PO / Tech Lead | `role-po` | Coordinación | Todos |
+| QA & DevOps / Release | `role-qa-devops` | #11, #12 | Toda la célula (smoke/release) |
+| PO / coordinación | `role-po` | Board | Toda la célula |
 
-Issues cerrados de plataforma/TDD (#8–#10, #13–#14) ya están resueltos en el shell; el trabajo de producto vive en #1–#7.
+Issues cerrados de plataforma (#8–#10, #13–#14) ya están resueltos en el shell; el trabajo de producto vive en #1–#7.
 
 ---
 
@@ -28,7 +33,7 @@ Issues cerrados de plataforma/TDD (#8–#10, #13–#14) ya están resueltos en e
 
 - Añadir Jetpack Compose al módulo `app` (deps en tu PR).
 - Pantallas composables: home/player, perfil, lista.
-- Catálogo ≥5 emisoras en `StationCatalog.defaults` (con Audio para URLs).
+- Catálogo ≥5 emisoras en `StationCatalog.defaults` (acuerda URLs con Audio).
 - `ComposeUiContract.homeScreenImplemented = true` cuando la home exista.
 - `MainActivity` con `setContent { … }` (hoy es Activity vacía).
 
@@ -48,12 +53,12 @@ Issues cerrados de plataforma/TDD (#8–#10, #13–#14) ya están resueltos en e
 
 - Declarar `CAMERA`, `VIBRATE`, `INTERNET` en `AndroidManifest.xml`.
 - Implementar `ProfileCamera` y cablear `Product.profileCamera()`.
-- Háptica: `RadioSession` debe llamar `HapticPort.tick()` en play/pause/mute.
+- Háptica: `RadioSession` debe llamar `HapticPort.tick()` en play/pause/mute (coordina con State).
 
 **DoD**
 
 - [ ] `Rf02`, `Rf03`, `Rf05` en verde
-- [ ] App no crashea si el usuario deniega permisos (manejar en UI/State)
+- [ ] App no crashea si el usuario deniega permisos
 
 ---
 
@@ -65,12 +70,12 @@ Issues cerrados de plataforma/TDD (#8–#10, #13–#14) ya están resueltos en e
 
 - Implementar `RadioSession` con estado mutable (play/pause/mute/estación).
 - Exponer vía `Product.radioSession(haptic)`.
-- Integrar con Compose (`mutableStateOf` / `rememberSaveable`) en coordinación con UI.
+- Integrar con Compose en coordinación con UI.
 
 **DoD**
 
 - [ ] `Rf04PlayerStateTest` en verde
-- [ ] Estado predecible y testeable (sin lógica solo en la Activity)
+- [ ] Estado predecible y testeable
 
 ---
 
@@ -80,7 +85,7 @@ Issues cerrados de plataforma/TDD (#8–#10, #13–#14) ya están resueltos en e
 
 **Qué hacer**
 
-- Añadir `androidx.media3:media3-exoplayer` (y ui si aplica) en `app/build.gradle.kts`.
+- Añadir `androidx.media3:media3-exoplayer` en `app/build.gradle.kts`.
 - Cablear ExoPlayer a `RadioSession` (play/pause/mute/cambio de estación).
 - Acordar URLs de stream con UI para el catálogo.
 
@@ -91,30 +96,29 @@ Issues cerrados de plataforma/TDD (#8–#10, #13–#14) ya están resueltos en e
 
 ---
 
-## QA & DevOps / Release (`role-qa-devops`)
+## QA & DevOps / Release (`role-qa-devops`) — Davidson
 
 **Issues:** [#11 PLAT-04](https://github.com/Dacadev97/iu-digital-radio/issues/11), [#12 PLAT-05](https://github.com/Dacadev97/iu-digital-radio/issues/12)
 
 **Qué hacer**
 
-- Mantener CI (ya bootstrap).
+- Mantener CI y el board de la célula.
 - Smoke con [QA_CHECKLIST.md](QA_CHECKLIST.md) cuando el MVP esté integrado.
 - Distribuir APK (workflow **Release APK** + Drive del grupo).
 
 **DoD**
 
-- [ ] Evidencias de smoke (capturas) para el PDF Canvas
-- [ ] APK instalable compartido al equipo
+- [ ] Evidencias de smoke para el PDF Canvas
+- [ ] APK instalable compartido a la célula
 
 ---
 
-## PO / Tech Lead (`role-po`)
+## PO / coordinación (`role-po`)
 
-**Qué hacer**
+En esta célula lo cubre **Davidson** junto a DevOps/QA:
 
-- Priorizar board, desbloquear dependencias entre squads.
+- Priorizar board, desbloquear dependencias entre roles.
 - Asegurar integración en `develop` antes de la entrega Canvas.
-- No implementar features de producto salvo acuerdo del equipo.
 
 ---
 
@@ -126,7 +130,7 @@ Archivo: `app/src/main/java/edu/iudigital/radio/api/ProductContracts.kt`
 |---------|-------------------|
 | `ComposeUiContract` | UI |
 | `Product.profileCamera()` | Hardware |
-| `Product.radioSession()` | State (+ Audio + Hardware háptica) |
+| `Product.radioSession()` | State (+ Audio + háptica Hardware) |
 | `StationCatalog.defaults` | UI (+ Audio URLs) |
 
-Hoy lanzan `NotImplementedError` o están en rojo a propósito. **Eso es el contrato TDD.**
+Hoy lanzan `NotImplementedError` o están en rojo a propósito. **Eso es el contrato TDD de la célula.**

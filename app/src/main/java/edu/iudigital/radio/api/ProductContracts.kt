@@ -2,7 +2,7 @@ package edu.iudigital.radio.api
 
 /**
  * Contratos vacíos del MVP (sin implementación).
- * Los squads crean las clases reales en sus PRs hasta verdear los tests RF.
+ * Cada rol de la célula crea las clases reales en su PR hasta verdear los tests RF.
  * Ver docs/ROLES.md.
  */
 
@@ -52,16 +52,16 @@ object StationCatalog {
 }
 
 /**
- * Punto de entrada para tests. Sin stubs: siempre NotImplementedError hasta el PR del squad.
+ * Punto de entrada para tests. Sin stubs: NotImplementedError hasta el PR del rol en la célula.
  */
 object Product {
     fun profileCamera(): ProfileCamera =
         throw NotImplementedError(
-            "RF-02: Hardware debe implementar ProfileCamera y devolverla aquí. Ver docs/ROLES.md"
+            "RF-02: rol Hardware — implementar ProfileCamera. Ver docs/ROLES.md"
         )
 
     fun radioSession(@Suppress("UNUSED_PARAMETER") haptic: HapticPort = HapticPort { }): RadioSession =
         throw NotImplementedError(
-            "RF-04/RF-05/RF-07: State/Audio/Hardware deben implementar RadioSession. Ver docs/ROLES.md"
+            "RF-04/RF-05/RF-07: roles State/Audio/Hardware — implementar RadioSession. Ver docs/ROLES.md"
         )
 }

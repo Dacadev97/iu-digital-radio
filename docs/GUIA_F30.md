@@ -1,5 +1,7 @@
 # Guía F30 — referencia
 
+**Modalidad de esta célula:** Célula (Opción A1 · Software House en célula 4–6).
+
 Fuente oficial (Drive):  
 https://drive.google.com/file/d/1IMTCEeF4k37p32EGlsgiOSju5R7conNt/view
 
@@ -10,3 +12,5 @@ Diagrama de roles (tutor):
 https://drive.google.com/file/d/1luXack_QE6sWWNzLQiaxlHG5TQhy_G5s/view
 
 Canvas assignment: curso `28457` · assignment `393386` · vence 2026-09-20 23:59.
+
+Onboarding de la célula: [ONBOARDING.md](ONBOARDING.md) · [ROLES.md](ROLES.md)

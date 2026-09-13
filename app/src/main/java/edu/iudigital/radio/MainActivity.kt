@@ -4,8 +4,8 @@ import android.app.Activity
 import android.os.Bundle
 
 /**
- * Shell vacío — este repo solo trae DevOps + tests (TDD).
- * Squad UI/UX (RF-01): reemplazar por UI 100% Jetpack Compose.
+ * Shell vacío — casa de la célula: solo DevOps + tests (TDD).
+ * Rol UI/UX (RF-01): reemplazar por UI 100% Jetpack Compose.
  * Ver docs/ROLES.md y docs/ONBOARDING.md.
  */
 class MainActivity : Activity() {

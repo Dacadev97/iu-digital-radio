@@ -1,7 +1,7 @@
-# TDD — contrato del MVP
+# TDD — contrato del MVP (célula)
 
 Los tests unitarios son la **especificación ejecutable**.  
-El repo es un **shell DevOps**: no hay implementación de producto; los squads la aportan por PR.
+El repo es un **shell DevOps** (casa de la célula): no hay implementación de producto; cada compañero la aporta por PR según su rol.
 
 ## Estado esperado al clonar
 
@@ -13,8 +13,8 @@ El repo es un **shell DevOps**: no hay implementación de producto; los squads l
 
 ## Qué debe pasar (Green)
 
-| Test | Condición Green | Squad |
-|------|-----------------|-------|
+| Test | Condición Green | Rol en la célula |
+|------|-----------------|------------------|
 | Rf01 | `ComposeUiContract.homeScreenImplemented = true` + sin `res/layout` | UI |
 | Rf02 | `Product.profileCamera()` → captura marca `hasProfilePhoto` | Hardware |
 | Rf03 | Manifest declara CAMERA, VIBRATE, INTERNET | Hardware |
@@ -31,4 +31,4 @@ El repo es un **shell DevOps**: no hay implementación de producto; los squads l
 
 ## Regla
 
-No rebajar asserts para “hacer pasar” CI. Si el contrato está mal, abre issue `qa`/`po`.
+No rebajar asserts para “hacer pasar” CI. Si el contrato está mal, avisa a QA/PO (Davidson).
