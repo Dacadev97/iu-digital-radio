@@ -1,31 +1,30 @@
 package edu.iudigital.radio
 
 import com.google.common.truth.Truth.assertThat
-import edu.iudigital.radio.mvp.Mvp
+import com.google.common.truth.Truth.assertWithMessage
+import edu.iudigital.radio.api.Product
 import org.junit.Test
+import java.io.File
 
 /**
- * RF-07 — Audio streaming (Media3): play/pause/mute afectan la sesión de audio.
- * Red: stub sin motor de audio / sin cambio de estado.
- *
- * Nota: la integración real con ExoPlayer la hace el squad Audio;
- * estos tests validan el contrato de sesión que debe cablearse al player.
+ * RF-07 — Audio streaming (Media3).
+ * ROJO: sin RadioSession real y sin dependencia media3-exoplayer en Gradle.
  */
 class Rf07AudioStreamingTest {
 
     @Test
     fun play_debeActivarReproduccion() {
-        val session = Mvp.radioSession()
+        val session = Product.radioSession()
         session.selectStation("1")
         session.play()
-        assertThat(session.isPlaying)
-            .named("RF-07: play() debe iniciar reproducción (Media3)")
+        assertWithMessage("RF-07: play() debe iniciar reproducción (Media3)")
+            .that(session.isPlaying)
             .isTrue()
     }
 
     @Test
     fun mute_debeSilenciarSinDetenerFlagDePlayingSiAplica() {
-        val session = Mvp.radioSession()
+        val session = Product.radioSession()
         session.selectStation("1")
         session.play()
         session.toggleMute()
@@ -35,7 +34,7 @@ class Rf07AudioStreamingTest {
 
     @Test
     fun alCambiarEmisora_playDebeUsarEstacionSeleccionada() {
-        val session = Mvp.radioSession()
+        val session = Product.radioSession()
         session.selectStation("alpha")
         session.play()
         assertThat(session.selectedStationId).isEqualTo("alpha")
@@ -48,15 +47,15 @@ class Rf07AudioStreamingTest {
     @Test
     fun dependenciaMedia3_debeEstarEnGradle() {
         val gradle = readAppGradle()
-        assertThat(gradle)
-            .named("app/build.gradle.kts debe incluir media3-exoplayer (RF-07)")
+        assertWithMessage("app/build.gradle.kts debe incluir media3-exoplayer (RF-07 Audio)")
+            .that(gradle)
             .contains("media3-exoplayer")
     }
 
     private fun readAppGradle(): String {
         val candidates = listOf(
-            java.io.File("build.gradle.kts"),
-            java.io.File("app/build.gradle.kts")
+            File("build.gradle.kts"),
+            File("app/build.gradle.kts")
         )
         val file = candidates.firstOrNull { it.isFile }
             ?: error("No se encontró app/build.gradle.kts")

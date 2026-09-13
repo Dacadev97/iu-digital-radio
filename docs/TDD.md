@@ -1,24 +1,34 @@
 # TDD — contrato del MVP
 
-Los tests unitarios son la **especificación ejecutable**. El stub de producto es deliberadamente incompleto.
+Los tests unitarios son la **especificación ejecutable**.  
+El repo es un **shell DevOps**: no hay implementación de producto; los squads la aportan por PR.
+
+## Estado esperado al clonar
+
+| Tarea | Resultado |
+|-------|-----------|
+| `./gradlew testDebugUnitTest` | **BUILD FAILED** (Red) |
+| `./gradlew assembleDebug` | **SUCCESS** (shell vacío) |
+| `./gradlew lintDebug` | **SUCCESS** |
 
 ## Qué debe pasar (Green)
 
-| Test class | Condición Green |
-|------------|-----------------|
-| Rf01 | `ComposeUiContract.homeScreenImplemented = true` + sin `res/layout` |
-| Rf02 | `ProfileCamera.onPreviewCaptured()` → `hasProfilePhoto == true` |
-| Rf03 | Manifest declara CAMERA, VIBRATE, INTERNET |
-| Rf04 | `RadioSession` muta play/pause/mute/estación |
-| Rf05 | Play+Pause+Mute llaman `HapticPort.tick()` ≥ 3 veces |
-| Rf06 | `StationCatalog.defaults` ≥ 5, ids únicos, URLs |
-| Rf07 | Sesión reproduce/mutea; Gradle incluye `media3-exoplayer` |
+| Test | Condición Green | Squad |
+|------|-----------------|-------|
+| Rf01 | `ComposeUiContract.homeScreenImplemented = true` + sin `res/layout` | UI |
+| Rf02 | `Product.profileCamera()` → captura marca `hasProfilePhoto` | Hardware |
+| Rf03 | Manifest declara CAMERA, VIBRATE, INTERNET | Hardware |
+| Rf04 | `RadioSession` muta play/pause/mute/estación | State |
+| Rf05 | Play+Pause+Mute llaman `HapticPort.tick()` ≥ 3 | Hardware (+ State) |
+| Rf06 | `StationCatalog.defaults` ≥ 5, ids únicos, URLs | UI (+ Audio) |
+| Rf07 | Sesión reproduce/mutea; Gradle incluye `media3-exoplayer` | Audio |
 
-## Comando
+## Dónde está el contrato
 
-```bash
-./gradlew testDebugUnitTest
-```
+- Tests: `app/src/test/java/edu/iudigital/radio/Rf0*.kt`
+- Interfaces / entry points: `app/src/main/java/edu/iudigital/radio/api/ProductContracts.kt`
+- Roles: [ROLES.md](ROLES.md) · Onboarding: [ONBOARDING.md](ONBOARDING.md)
 
-Salida esperada al inicio del sprint: **BUILD FAILED** (Red).  
-Al cerrar MVP: **BUILD SUCCESSFUL**.
+## Regla
+
+No rebajar asserts para “hacer pasar” CI. Si el contrato está mal, abre issue `qa`/`po`.

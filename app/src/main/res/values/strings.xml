@@ -1,10 +1,3 @@
 <resources>
     <string name="app_name">IU Digital Radio</string>
-    <string name="profile_title">Perfil</string>
-    <string name="player_title">Reproductor</string>
-    <string name="stations_title">Emisoras</string>
-    <string name="take_photo">Tomar foto</string>
-    <string name="play">Play</string>
-    <string name="pause">Pause</string>
-    <string name="mute">Mute</string>
 </resources>

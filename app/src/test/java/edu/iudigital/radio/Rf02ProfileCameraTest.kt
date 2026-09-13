@@ -1,24 +1,25 @@
 package edu.iudigital.radio
 
 import com.google.common.truth.Truth.assertThat
-import edu.iudigital.radio.mvp.Mvp
+import com.google.common.truth.Truth.assertWithMessage
+import edu.iudigital.radio.api.Product
 import org.junit.Test
 
 /**
  * RF-02 — Perfil con cámara (TakePicturePreview).
- * Red: StubProfileCamera no actualiza hasProfilePhoto.
+ * ROJO: Product.profileCamera() lanza NotImplementedError hasta el PR de Hardware.
  */
 class Rf02ProfileCameraTest {
 
     @Test
     fun alCapturarPreview_debeMarcarFotoDePerfil() {
-        val camera = Mvp.profileCamera()
+        val camera = Product.profileCamera()
         assertThat(camera.hasProfilePhoto).isFalse()
 
         camera.onPreviewCaptured()
 
-        assertThat(camera.hasProfilePhoto)
-            .named("Tras TakePicturePreview, el estado de perfil debe tener foto")
+        assertWithMessage("Tras TakePicturePreview, el estado de perfil debe tener foto")
+            .that(camera.hasProfilePhoto)
             .isTrue()
     }
 }

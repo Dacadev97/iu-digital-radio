@@ -1,34 +1,16 @@
 package edu.iudigital.radio
 
+import android.app.Activity
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 
 /**
- * Stub mínimo para que el proyecto compile.
- * Developers: reemplazar por UI Compose del MVP (RF-01…RF-07).
- * No implementar aquí hasta que pasen los tests en `src/test`.
+ * Shell vacío — este repo solo trae DevOps + tests (TDD).
+ * Squad UI/UX (RF-01): reemplazar por UI 100% Jetpack Compose.
+ * Ver docs/ROLES.md y docs/ONBOARDING.md.
  */
-class MainActivity : ComponentActivity() {
+class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            MaterialTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    Text(
-                        text = "IU Digital Radio — stub. Implementar MVP (ver tests RF).",
-                        modifier = Modifier.padding(24.dp),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            }
-        }
+        // Sin UI de producto. Implementar en PR de feature.
     }
 }

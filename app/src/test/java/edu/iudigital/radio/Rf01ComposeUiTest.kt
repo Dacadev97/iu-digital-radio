@@ -1,21 +1,22 @@
 package edu.iudigital.radio
 
-import com.google.common.truth.Truth.assertThat
-import edu.iudigital.radio.mvp.ComposeUiContract
+import com.google.common.truth.Truth.assertWithMessage
+import edu.iudigital.radio.api.ComposeUiContract
 import org.junit.Test
 import java.io.File
 
 /**
  * RF-01 — UI 100% Jetpack Compose.
- * Red hasta que el squad UI marque el contrato e implemente la home Compose (sin layouts XML).
+ * ROJO hasta que UI marque el contrato e implemente la home (sin layouts XML).
  */
 class Rf01ComposeUiTest {
 
     @Test
     fun homeScreenCompose_debeEstarImplementada() {
-        assertThat(ComposeUiContract.homeScreenImplemented)
-            .named("ComposeUiContract.homeScreenImplemented — crear RadioHomeScreen y poner true")
-            .isTrue()
+        assertWithMessage(
+            "RF-01: crear RadioHomeScreen (Compose), cablear MainActivity " +
+                "y poner ComposeUiContract.homeScreenImplemented = true. Ver docs/ROLES.md"
+        ).that(ComposeUiContract.homeScreenImplemented).isTrue()
     }
 
     @Test
@@ -23,8 +24,8 @@ class Rf01ComposeUiTest {
         val layoutDir = resolveAppFile("src/main/res/layout")
         if (!layoutDir.exists()) return
         val xml = layoutDir.walkTopDown().filter { it.isFile && it.extension == "xml" }.toList()
-        assertThat(xml)
-            .named("RF-01 prohíbe res/layout/*.xml — UI solo Compose")
+        assertWithMessage("RF-01 prohíbe res/layout/*.xml — UI solo Compose")
+            .that(xml)
             .isEmpty()
     }
 

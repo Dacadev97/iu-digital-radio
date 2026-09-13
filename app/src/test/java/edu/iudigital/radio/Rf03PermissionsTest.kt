@@ -1,12 +1,12 @@
 package edu.iudigital.radio
 
-import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import org.junit.Test
 import java.io.File
 
 /**
  * RF-03 — Permisos CAMERA / VIBRATE (+ INTERNET para streams).
- * Red: AndroidManifest stub sin esos permisos.
+ * ROJO: Manifest shell sin esos permisos.
  */
 class Rf03PermissionsTest {
 
@@ -19,8 +19,8 @@ class Rf03PermissionsTest {
     }
 
     private fun assertDeclaresPermission(manifest: String, name: String) {
-        assertThat(manifest)
-            .named("AndroidManifest debe declarar $name")
+        assertWithMessage("AndroidManifest debe declarar $name — RF-03 Hardware. Ver docs/ROLES.md")
+            .that(manifest)
             .contains("android:name=\"$name\"")
     }
 

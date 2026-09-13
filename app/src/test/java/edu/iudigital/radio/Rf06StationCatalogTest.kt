@@ -1,18 +1,20 @@
 package edu.iudigital.radio
 
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
+import edu.iudigital.radio.api.StationCatalog
 import org.junit.Test
 
 /**
  * RF-06 — LazyColumn / catálogo de emisoras (≥5, ids únicos, stream URL).
- * Red: StationCatalog.defaults vacío.
+ * ROJO: StationCatalog.defaults lanza NotImplementedError hasta el PR de UI/Audio.
  */
 class Rf06StationCatalogTest {
 
     @Test
     fun catalogo_debeTenerAlMenosCincoEmisoras() {
-        assertThat(StationCatalog.defaults.size)
-            .named("StationCatalog.defaults para LazyColumn")
+        assertWithMessage("StationCatalog.defaults para LazyColumn")
+            .that(StationCatalog.defaults.size)
             .isAtLeast(5)
     }
 

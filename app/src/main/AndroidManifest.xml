@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
-      RF-03 (TDD): CAMERA y VIBRATE deben declararse aquí.
-      Stub limpio: sin permisos de hardware — los tests RF-03 fallan hasta que Hardware squad los agregue.
-      INTERNET también es requerido para streaming (RF-07).
+      Shell DevOps: sin permisos de producto.
+      Hardware (RF-03) debe declarar CAMERA, VIBRATE e INTERNET.
+      Ver docs/ROLES.md — el test Rf03PermissionsTest falla hasta entonces.
     -->
 
     <application
@@ -12,12 +12,10 @@
         android:icon="@android:drawable/ic_btn_speak_now"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.IUDigitalRadio"
-        android:usesCleartextTraffic="true">
+        android:theme="@style/Theme.IUDigitalRadio">
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

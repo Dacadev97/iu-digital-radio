@@ -1,27 +1,37 @@
 package edu.iudigital.radio
 
-import com.google.common.truth.Truth.assertThat
-import edu.iudigital.radio.mvp.Mvp
-import edu.iudigital.radio.mvp.RecordingHapticPort
+import com.google.common.truth.Truth.assertWithMessage
+import edu.iudigital.radio.api.HapticPort
+import edu.iudigital.radio.api.Product
 import org.junit.Test
 
 /**
  * RF-05 — Vibración / háptica en Play, Pause y Mute.
- * Red: stub no invoca HapticPort.
+ * ROJO hasta que RadioSession invoque HapticPort en esos controles.
  */
 class Rf05HapticTest {
 
     @Test
     fun playPauseMute_debenDispararHaptica() {
         val haptic = RecordingHapticPort()
-        val session = Mvp.radioSession(haptic)
+        val session = Product.radioSession(haptic)
 
         session.play()
         session.pause()
         session.toggleMute()
 
-        assertThat(haptic.ticks)
-            .named("Play + Pause + Mute deben llamar HapticPort.tick() (RF-05)")
+        assertWithMessage("Play + Pause + Mute deben llamar HapticPort.tick() (RF-05)")
+            .that(haptic.ticks)
             .isAtLeast(3)
+    }
+}
+
+/** Helper de test (QA) — no es código de producto. */
+class RecordingHapticPort : HapticPort {
+    var ticks: Int = 0
+        private set
+
+    override fun tick() {
+        ticks++
     }
 }
