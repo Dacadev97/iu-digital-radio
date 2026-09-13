@@ -11,7 +11,7 @@ También: [ROLES.md](ROLES.md) · [TDD.md](TDD.md) · [../CONTRIBUTING.md](../CO
 **Documento escrito de la célula (Google Docs):** https://docs.google.com/document/d/1A2VFSnmZf0X946tLOFOfcxVCrduWtBdiIYpUAiPPZgo/edit?usp=sharing  
 → De ahí sale el **PDF técnico grupal** para Canvas (F30).  
 **Acceso:** Davidson invita a cada integrante en GitHub → **Settings → Collaborators** → *Add people*.  
-**QA & DevOps:** Davidson Cadavid
+**PO + PM + DevOps:** Davidson Cadavid (`@Dacadev97`) — backlog, board, CI, approvals, APK.
 
 ## Antes de codear
 
