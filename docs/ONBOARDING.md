@@ -6,12 +6,13 @@ Guía corta (≈10 min) · F30 · **modalidad célula** (4–6 personas).
 
 - Modalidad: **Célula** (Opción A1 · Software House en célula), no una “empresa” con muchos equipos en paralelo.
 - Cada compañero toma **su issue** según el **rol** que le tocó en la célula.
-- Este repo es **nuestra casa**: solo trae DevOps (CI, APK) + **tests en rojo** (contrato TDD).
+- Este repo es **nuestra casa** (**privado**): solo trae DevOps (CI, APK) + **tests en rojo** (contrato TDD).
 - Tú implementas el producto en una rama y lo entregas por **Pull Request** a `develop`.
-- **Davidson** = QA & DevOps / Release (+ PO/board/CI).
+- **Davidson** = QA & DevOps / Release (+ PO/board/CI). Invita a la célula en **Settings → Collaborators**.
 
 ## Checklist del día 1
 
+0. **Acceso:** acepta la invitación al repo privado (si no llega, pide a Davidson que te agregue en Settings → Collaborators).  
 1. **Board de la célula:** https://github.com/users/Dacadev97/projects/4  
 2. **Tu rol:** [ROLES.md](ROLES.md) — issues y Definition of Done.  
 3. **Filtra** por label `role-*` (ej. `role-ui`).  

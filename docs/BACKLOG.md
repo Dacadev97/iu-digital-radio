@@ -1,13 +1,12 @@
-# Backlog F30 — célula IU Digital Radio (TDD)
+# Backlog F30 — IU Digital Radio (TDD)
 
-**Modalidad:** Célula (Opción A1 · 4–6 personas)  
-**QA & DevOps / Release (+ PO/board):** Davidson Cadavid  
+**QA & DevOps / Release:** Davidson Cadavid  
+**Modalidad:** Célula (Opción A1 · 4–6)  
 **Board:** https://github.com/users/Dacadev97/projects/4  
-
 **Definition of Ready:** issue RF + test `Rf0X` en rojo + AC claros.  
 **Definition of Done:** PR a `develop`, tests de tu RF en verde, AC cumplidos, tarjeta **Done**.
 
-## Épica MVP (producto — lo implementa la célula)
+## Épica MVP (producto — lo implementan compañeros de la célula)
 
 | ID | Issue | Test | Rol |
 |----|-------|------|-----|
