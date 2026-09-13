@@ -2,12 +2,48 @@
 
 Trabajamos en **modalidad célula** (4–6 personas).
 
-→ Empieza en **[ONBOARDING.md](ONBOARDING.md)**.
+→ Empieza en **[ONBOARDING.md](ONBOARDING.md)** · kickoff: [#17](https://github.com/Dacadev97/iu-digital-radio/issues/17).
 
 También: [ROLES.md](ROLES.md) · [TDD.md](TDD.md) · [../CONTRIBUTING.md](../CONTRIBUTING.md) · [../README.md](../README.md)
 
 **Board de la célula:** https://github.com/users/Dacadev97/projects/4  
 **Repo (casa, privado):** https://github.com/Dacadev97/iu-digital-radio  
 **Acceso:** Davidson invita a cada integrante en GitHub → **Settings → Collaborators** → *Add people*.  
-**Ramas:** trabajen en `feature/*` → `develop`; **no** a `main`. Solo Davidson aprueba PRs. Ver [BRANCH_PROTECTION.md](BRANCH_PROTECTION.md).  
 **QA & DevOps:** Davidson Cadavid
+
+## Antes de codear
+
+1. Elige rol en [ROLES.md](ROLES.md).  
+2. Reclama tu issue en el board (**Assignees → Assign yourself**).  
+3. **Pon tu nombre** en la tabla *Quién toma qué rol* (PR a `develop` o comentario en el issue; no borres filas).  
+4. Crea tu rama desde `develop`.
+
+---
+
+## Mapa rápido: issue → rol
+
+| Issue | Título corto | Rol | Label | ¿La tomo? |
+|-------|--------------|-----|-------|-----------|
+| **#17** | Kickoff — nombre en ROLES | Toda la célula | — | **Sí, primero** |
+| **#1** | UI Compose | UI/UX Compose | `role-ui` | Sí (producto) |
+| **#2** | Cámara perfil | Hardware | `role-hardware` | Sí |
+| **#3** | Permisos Manifest | Hardware | `role-hardware` | Sí |
+| **#4** | Estado player | State & Logic | `role-state` | Sí |
+| **#5** | Vibración | Hardware | `role-hardware` | Sí |
+| **#6** | Lista emisoras | UI/UX Compose | `role-ui` | Sí |
+| **#7** | Audio Media3 | Audio & API | `role-audio` | Sí |
+| #11 | Smoke QA | Davidson | `role-qa-devops` | **No** (solo QA) |
+| #12 | Release APK | Davidson | `role-qa-devops` | **No** |
+| #8–#10 | PLAT hechos | — | `plat` | **No** (Done / cerrados) |
+| #13–#14 | TDD viejos | — | — | **No** (cerrados; contrato = tests `Rf0X`) |
+
+### Cómo leer el board
+
+| Columna | Significado |
+|---------|-------------|
+| **Todo** | Libre o listo para reclamar (RF + kickoff) |
+| **In Progress** | Alguien lo está haciendo |
+| **Testing** | PR listo → Davidson hace smoke |
+| **Done** | Terminado (incluye PLAT de infra) |
+
+Filtra por label `role-ui` / `role-hardware` / `role-state` / `role-audio` para ver solo lo tuyo.

@@ -10,7 +10,26 @@ Roles de la guía del tutor, repartidos **dentro de la misma célula** (un repo,
 
 **Board:** https://github.com/users/Dacadev97/projects/4
 
-## Resumen
+---
+
+## Quién toma qué rol (escribe tu nombre)
+
+Antes de codear: elige un rol libre → reclama el issue en el board → **pon tu nombre en esta tabla** → crea tu rama.
+
+**Cómo actualizarla:** edita esta tabla en un PR a `develop` o comenta en el issue de tu rol. **No borres filas.**
+
+| Rol | Nombre (compañero/a) | Issues típicos | GitHub user |
+|-----|----------------------|----------------|-------------|
+| UI/UX Compose | _pendiente_ | #1 #6 | |
+| State & Logic | _pendiente_ | #4 | |
+| Hardware & Permissions | _pendiente_ | #2 #3 #5 | |
+| Audio & API | _pendiente_ | #7 | |
+| QA & DevOps / Release | Davidson Cadavid | PLAT / CI (#11 #12) | Dacadev97 |
+| PO / Tech Lead (coordinación) | Davidson Cadavid | board | Dacadev97 |
+
+---
+
+## Resumen técnico
 
 | Rol en la célula | Label | Issues abiertos | Colabora con |
 |------------------|-------|-----------------|--------------|
@@ -21,7 +40,9 @@ Roles de la guía del tutor, repartidos **dentro de la misma célula** (un repo,
 | QA & DevOps / Release | `role-qa-devops` | #11, #12 | Toda la célula (smoke/release) |
 | PO / coordinación | `role-po` | Board | Toda la célula |
 
-Issues cerrados de plataforma (#8–#10, #13–#14) ya están resueltos en el shell; el trabajo de producto vive en #1–#7.
+Issues cerrados de plataforma (#8–#10) y TDD históricos (#13–#14) **ya están hechos** — no los tomen.  
+Trabajo de producto: **#1–#7**. Primer paso de la célula: **[#17 Kickoff](https://github.com/Dacadev97/iu-digital-radio/issues/17)**.  
+Mapa issue → rol: [PARA_EL_EQUIPO.md](PARA_EL_EQUIPO.md).
 
 ---
 

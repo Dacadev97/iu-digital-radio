@@ -21,8 +21,10 @@ App Android (**Kotlin**) — Evidencia **F30** · IU Digital de Antioquia · mod
 
 1. Confirma que te invitaron al repo (si no, pide acceso a Davidson).
 2. Lee **[docs/ONBOARDING.md](docs/ONBOARDING.md)** (5 minutos).
-3. Elige tu rol en **[docs/ROLES.md](docs/ROLES.md)**.
-4. Sigue **[CONTRIBUTING.md](CONTRIBUTING.md)** para setup + primera PR.
+3. Elige tu rol en **[docs/ROLES.md](docs/ROLES.md)**, reclama el issue y **pon tu nombre en la tabla** de ese doc.
+4. Crea tu rama y sigue **[CONTRIBUTING.md](CONTRIBUTING.md)** para setup + primera PR.
+
+> **Antes de codear:** elige rol → reclama issue → pon tu nombre en [ROLES.md](docs/ROLES.md) → crea rama.
 
 ## Cómo elegir tu issue
 
@@ -37,12 +39,13 @@ Cada persona de la célula toma **su** issue (uno a la vez).
 
 | Rol (célula) | Labels | Issues |
 |--------------|--------|--------|
-| **UI/UX Compose** | `role-ui` | [#1 RF-01](https://github.com/Dacadev97/iu-digital-radio/issues/1), [#6 RF-06](https://github.com/Dacadev97/iu-digital-radio/issues/6) · (histórico [#13](https://github.com/Dacadev97/iu-digital-radio/issues/13)) |
-| **Hardware & Permissions** | `role-hardware` | [#2 RF-02](https://github.com/Dacadev97/iu-digital-radio/issues/2), [#3 RF-03](https://github.com/Dacadev97/iu-digital-radio/issues/3), [#5 RF-05](https://github.com/Dacadev97/iu-digital-radio/issues/5) · (histórico [#14](https://github.com/Dacadev97/iu-digital-radio/issues/14)) |
-| **State & Logic** | `role-state` | [#4 RF-04](https://github.com/Dacadev97/iu-digital-radio/issues/4) |
-| **Audio & API** | `role-audio` | [#7 RF-07](https://github.com/Dacadev97/iu-digital-radio/issues/7) |
-| **QA & DevOps / Release** | `role-qa-devops` | [#11 PLAT-04](https://github.com/Dacadev97/iu-digital-radio/issues/11), [#12 PLAT-05](https://github.com/Dacadev97/iu-digital-radio/issues/12) · (cerrados #8–#10) |
-| **PO / Tech Lead** | `role-po` | Coordinación · (cerrado [#10](https://github.com/Dacadev97/iu-digital-radio/issues/10)) |
+| **Toda la célula (día 1)** | — | **[#17 Kickoff](https://github.com/Dacadev97/iu-digital-radio/issues/17)** — nombre en ROLES |
+| **UI/UX Compose** | `role-ui` | [#1](https://github.com/Dacadev97/iu-digital-radio/issues/1), [#6](https://github.com/Dacadev97/iu-digital-radio/issues/6) |
+| **Hardware & Permissions** | `role-hardware` | [#2](https://github.com/Dacadev97/iu-digital-radio/issues/2), [#3](https://github.com/Dacadev97/iu-digital-radio/issues/3), [#5](https://github.com/Dacadev97/iu-digital-radio/issues/5) |
+| **State & Logic** | `role-state` | [#4](https://github.com/Dacadev97/iu-digital-radio/issues/4) |
+| **Audio & API** | `role-audio` | [#7](https://github.com/Dacadev97/iu-digital-radio/issues/7) |
+| **QA & DevOps (Davidson)** | `role-qa-devops` | [#11](https://github.com/Dacadev97/iu-digital-radio/issues/11), [#12](https://github.com/Dacadev97/iu-digital-radio/issues/12) — *no las tomen compañeros* |
+| **Ignorar** | — | PLAT Done #8–#10 · TDD cerrados #13–#14 |
 
 Detalle de DoD por rol: [docs/ROLES.md](docs/ROLES.md).
 
