@@ -2,18 +2,19 @@
 <!-- ¿Qué cambia y por qué? -->
 
 ## Tipo
-- [ ] feat
+- [ ] feat (hacia Green)
 - [ ] fix
 - [ ] docs
 - [ ] ci
-- [ ] test
+- [ ] test (solo PO/QA — no bajar la barra del contrato)
 - [ ] chore
 
-## Checklist QA
-- [ ] `./gradlew testDebugUnitTest` OK en local o CI
-- [ ] No rompe el MVP (perfil / player / lista)
-- [ ] Capturas o evidencia si toca UI/hardware
-- [ ] Issue / RF vinculado
+## TDD
+- [ ] `./gradlew testDebugUnitTest` **verde** en local
+- [ ] No se debilitaron asserts de Rf01…Rf07 sin acuerdo PO/QA
+- [ ] Issue RF vinculado (`Closes #N`)
 
-## Evidencia
-<!-- Link a issue, capturas, video corto -->
+## Checklist QA
+- [ ] `./gradlew assembleDebug` OK
+- [ ] Evidencia UI/hardware si aplica
+- [ ] Capturas o link a run de Actions

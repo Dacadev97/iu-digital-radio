@@ -1,23 +1,31 @@
-# Contribución — IU Digital Radio
+# Contribución — IU Digital Radio (TDD)
 
-## Ramas
+## Red → Green → Refactor
 
-- `main` — estable / entregable
-- `develop` — integración del sprint
-- `feature/<squad>-<corto>` — trabajo por rol
-- `fix/<corto>` — correcciones
+1. **Red:** los tests en `app/src/test/.../Rf0*.kt` definen el contrato. Al clonar deben **fallar**.
+2. **Green:** implementar en `main` / `mvp` lo mínimo para pasar.
+3. **Refactor:** mejorar diseño sin romper CI.
 
-## Pull requests
+No bajar la barra del test para “hacer pasar” CI. Si el contrato está mal, abrir issue con label `po` / `qa`.
 
-1. Base: `develop` (salvo hotfix urgente → `main`).
-2. CI debe pasar (unit tests + assembleDebug + lint).
-3. Completar template de PR (checklist QA).
-4. Vincular issue (`Closes #N` / `Refs #N`).
+## Dónde tocar código
 
-## Labels sugeridos
+| Área | Archivos típicos |
+|------|------------------|
+| Contratos / stubs | `mvp/MvpContracts.kt`, `Station.kt` |
+| UI Compose | `MainActivity.kt` + pantallas nuevas |
+| Permisos | `AndroidManifest.xml` |
+| Audio | Media3 en `app/build.gradle.kts` + implementación de `RadioSession` |
 
-`rf-01` … `rf-07` · `plat` · `devops` · `qa` · `po` · `bug` · `enhancement` · `blocked`
+Punto de entrada de tests: `Mvp.profileCamera()` y `Mvp.radioSession(haptic)`.
 
-## Roles
+## Ramas y PR
 
-PO prioriza; DevOps mantiene CI/APK; QA automation valida checklist y gates de Actions.
+- Base: `develop`
+- CI debe quedar **verde** (unit tests + assembleDebug + lint)
+- Completar checklist del PR template
+- Vincular issue RF (`Closes #N`)
+
+## Labels
+
+`rf-01`…`rf-07` · `plat` · `devops` · `qa` · `po` · `mvp`

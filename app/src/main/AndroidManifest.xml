@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- RF-03: permisos de hardware -->
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <!--
+      RF-03 (TDD): CAMERA y VIBRATE deben declararse aquí.
+      Stub limpio: sin permisos de hardware — los tests RF-03 fallan hasta que Hardware squad los agregue.
+      INTERNET también es requerido para streaming (RF-07).
+    -->
 
     <application
         android:allowBackup="true"

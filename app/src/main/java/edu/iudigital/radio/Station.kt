@@ -1,8 +1,8 @@
 package edu.iudigital.radio
 
 /**
- * Modelo de dominio de una emisora/pista.
- * PO: RF-06 / RF-07 — lista dinámica + reproducción.
+ * Modelo de dominio de una emisora.
+ * RF-06 / RF-07 — lista + stream URL.
  */
 data class Station(
     val id: String,
@@ -11,13 +11,10 @@ data class Station(
     val genre: String = "General"
 )
 
+/**
+ * STUB — catálogo vacío a propósito (TDD rojo).
+ * Squad UI/Audio: popular con ≥5 emisoras reales o mock con URLs de stream.
+ */
 object StationCatalog {
-    /** Catálogo inicial (mock). Audio squad puede reemplazar por Radio Browser API. */
-    val defaults: List<Station> = listOf(
-        Station("1", "IU Digital News", "https://stream.example/iud-news", "Noticias"),
-        Station("2", "Campus Beats", "https://stream.example/campus-beats", "Música"),
-        Station("3", "Tech Talks", "https://stream.example/tech-talks", "Educación"),
-        Station("4", "Chocó Vibes", "https://stream.example/choco-vibes", "Regional"),
-        Station("5", "Study Focus", "https://stream.example/study-focus", "Instrumental"),
-    )
+    val defaults: List<Station> = emptyList()
 }

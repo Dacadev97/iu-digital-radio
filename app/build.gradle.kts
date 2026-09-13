@@ -58,9 +58,9 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
 
-    // Media3 ExoPlayer (Audio squad + CI dependency check)
-    implementation("androidx.media3:media3-exoplayer:1.4.0")
-    implementation("androidx.media3:media3-ui:1.4.0")
+    // RF-07: Audio squad debe agregar Media3 (tests fallan hasta entonces):
+    // implementation("androidx.media3:media3-exoplayer:1.4.0")
+    // implementation("androidx.media3:media3-ui:1.4.0")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")

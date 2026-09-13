@@ -1,4 +1,7 @@
-name: CI — Build & Test
+name: CI — Build & Test (TDD)
+
+# Unit tests son el contrato: en ROJO hasta que developers implementen el MVP.
+# assembleDebug/lint validan que el stub compile aunque los tests fallen.
 
 on:
   push:
@@ -13,7 +16,7 @@ concurrency:
 
 jobs:
   unit-test:
-    name: Unit tests
+    name: Unit tests (TDD contract)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -41,7 +44,7 @@ jobs:
   build-apk:
     name: Assemble debug APK
     runs-on: ubuntu-latest
-    needs: unit-test
+    # Independiente de unit-test: el stub debe compilar aunque el contrato esté en rojo.
     steps:
       - uses: actions/checkout@v4
 
