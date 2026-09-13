@@ -82,18 +82,40 @@ Cuando tu RF esté verde (y no rompas lo demás), sigue al PR.
 | **Testing** | PR abierto / esperando CI o review de QA |
 | **Done** | Mergeado a `develop` y AC del issue cumplidos |
 
-## 6. Pull Request — checklist
+## 6. Política de ramas (célula F30)
 
-- [ ] Base branch: **`develop`**
+```
+main  ←  develop  ←  feature/<rol>-<issue>
+```
+
+- **`main`:** protegida. Nadie de la célula pushea. Solo entra por **PR** con **approval de Davidson** (`@Dacadev97`, Code Owner) + checks `Assemble debug APK` y `Android Lint`.
+- **`develop`:** base de integración. Puedes **pushear** como collaborator; **force-push y borrar la rama están bloqueados**. Lo ideal sigue siendo `feature/*` → PR a `develop`.
+- **PRs:** solo Davidson **aprueba** (y mergea a `main`). En PRs a `develop`, también espera su review cuando abras PR.
+- Code Owners: `.github/CODEOWNERS` → `* @Dacadev97`.
+
+Documento completo: [docs/BRANCH_PROTECTION.md](docs/BRANCH_PROTECTION.md).
+
+### Otras restricciones recomendadas
+
+- Un issue → una rama → un PR (PRs pequeños).
+- No force-push a ramas compartidas; no reescribir historial de `develop`.
+- No subir secretos, `local.properties`, keystores ni APK firmados al repo.
+- No “suavizar” asserts del contrato TDD para pasar CI.
+- Borrar `feature/*` tras merge; no tocar `main`/`develop` desde el cliente Git.
+- Coordinar deps compartidas (Compose/Media3) en el issue o un PR de plataforma.
+
+## 7. Pull Request — checklist
+
+- [ ] Base branch: **`develop`** (nunca `main`, salvo Davidson en release)
 - [ ] Título claro: `[RF-0X] …` o `[PLAT-0X] …`
 - [ ] Body: qué hiciste + cómo probar + `Closes #N`
-- [ ] CI Actions en verde (o justificado si aún falta integrar el trabajo de otro compañero de la célula)
+- [ ] CI Actions: assemble/lint OK; tests de tu RF avanzando a verde
 - [ ] No subiste secretos / `local.properties`
-- [ ] Tarjeta en **Testing** al abrir el PR; **Done** tras merge
+- [ ] Tarjeta en **Testing** al abrir el PR; **Done** tras merge de Davidson
 
 Plantilla: `.github/pull_request_template.md`.
 
-## 7. Después del merge
+## 8. Después del merge
 
 ```bash
 git checkout develop
@@ -104,8 +126,8 @@ Borra la rama local si quieres: `git branch -d feature/...`
 
 ## Dudas
 
-- Repo / CI / board → **Davidson** (QA & DevOps / Release)
+- Repo / CI / board / accesos → **Davidson** (QA & DevOps / Release)
 - Alcance de un RF → comenta en el issue
 - Contrato de test mal planteado → issue con labels `qa` + `po` (no bajes la barra del assert)
 
-Más contexto: [docs/ONBOARDING.md](docs/ONBOARDING.md) · [docs/ROLES.md](docs/ROLES.md) · [docs/TDD.md](docs/TDD.md)
+Más contexto: [docs/ONBOARDING.md](docs/ONBOARDING.md) · [docs/ROLES.md](docs/ROLES.md) · [docs/TDD.md](docs/TDD.md) · [docs/BRANCH_PROTECTION.md](docs/BRANCH_PROTECTION.md)

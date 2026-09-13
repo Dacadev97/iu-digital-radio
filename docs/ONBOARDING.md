@@ -7,8 +7,9 @@ Guía corta (≈10 min) · F30 · **modalidad célula** (4–6 personas).
 - Modalidad: **Célula** (Opción A1 · Software House en célula), no una “empresa” con muchos equipos en paralelo.
 - Cada compañero toma **su issue** según el **rol** que le tocó en la célula.
 - Este repo es **nuestra casa** (**privado**): solo trae DevOps (CI, APK) + **tests en rojo** (contrato TDD).
-- Tú implementas el producto en una rama y lo entregas por **Pull Request** a `develop`.
-- **Davidson** = QA & DevOps / Release (+ PO/board/CI). Invita a la célula en **Settings → Collaborators**.
+- Tú implementas el producto en una rama `feature/*` y lo entregas por **Pull Request** a `develop` (o push a `develop` si ya coordinaron; **nunca a `main`**).
+- **Davidson** (`@Dacadev97`) = único que **aprueba** PRs / mergea a `main`. También QA & DevOps / Release (+ PO/board/CI). Invita a la célula en **Settings → Collaborators**.
+- Detalle de reglas: [BRANCH_PROTECTION.md](BRANCH_PROTECTION.md).
 
 ## Checklist del día 1
 
@@ -20,8 +21,8 @@ Guía corta (≈10 min) · F30 · **modalidad célula** (4–6 personas).
 5. **Setup:** [CONTRIBUTING.md](../CONTRIBUTING.md) (clone → `develop` → rama).  
 6. Corre `./gradlew testDebugUnitTest` — **debe fallar**. Eso es el Red del TDD.  
 7. Implementa hasta verdear **tus** tests; coordina con el compañero si hay dependencia.  
-8. Abre PR a `develop` → tarjeta **Testing**.  
-9. Tras merge → **Done**.
+8. Abre PR a `develop` → tarjeta **Testing** (Davidson revisa/aprueba).  
+9. Tras merge → **Done**. No pushees a `main`.
 
 ## Mapa rápido de carpetas
 
@@ -40,8 +41,10 @@ iu-digital-radio/          ← casa de la célula
 
 | Sí | No |
 |----|----|
-| Trabajar desde `develop` | Commitear directo a `main` |
+| Rama `feature/*` desde `develop` | Commitear o pushear a `main` |
+| PR a `develop` (ideal) o push a `develop` | Force-push a `develop` / `main` |
 | Un issue / una rama | Meter todo el MVP en un solo PR gigante |
+| Esperar approval de **Davidson** | Auto-merge sin review del dueño |
 | Hablar con el compañero del rol dependiente | Borrar o “suavizar” tests para pasar CI |
 | Añadir Compose/Media3 en **tu** PR | Asumir que el shell ya trae deps de producto |
 
@@ -56,4 +59,4 @@ iu-digital-radio/          ← casa de la célula
 - Repo: https://github.com/Dacadev97/iu-digital-radio  
 - Project: https://github.com/users/Dacadev97/projects/4  
 - Actions: https://github.com/Dacadev97/iu-digital-radio/actions  
-- [ROLES.md](ROLES.md) · [TDD.md](TDD.md) · [BACKLOG.md](BACKLOG.md) · [QA_CHECKLIST.md](QA_CHECKLIST.md)
+- [ROLES.md](ROLES.md) · [TDD.md](TDD.md) · [BACKLOG.md](BACKLOG.md) · [QA_CHECKLIST.md](QA_CHECKLIST.md) · [BRANCH_PROTECTION.md](BRANCH_PROTECTION.md)
