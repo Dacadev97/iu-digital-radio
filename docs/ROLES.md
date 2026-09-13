@@ -40,7 +40,9 @@ Antes de codear: elige un rol libre → reclama el issue en el board → **pon t
 | QA & DevOps / Release | `role-qa-devops` | #11, #12 | Toda la célula (smoke/release) |
 | PO / coordinación | `role-po` | Board | Toda la célula |
 
-Issues cerrados de plataforma (#8–#10, #13–#14) ya están resueltos en el shell; el trabajo de producto vive en #1–#7.
+Issues cerrados de plataforma (#8–#10) y TDD históricos (#13–#14) **ya están hechos** — no los tomen.  
+Trabajo de producto: **#1–#7**. Primer paso de la célula: **[#17 Kickoff](https://github.com/Dacadev97/iu-digital-radio/issues/17)**.  
+Mapa issue → rol: [PARA_EL_EQUIPO.md](PARA_EL_EQUIPO.md).
 
 ---
 

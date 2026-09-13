@@ -20,17 +20,17 @@ Ideal (recomendado en la célula): `feature/*` → PR a `develop` → (Davidson 
 ## Estado
 
 Configurado vía API (`gh`) el **2026-09-13** sobre el repo privado.  
-`restrictions` (allowlist de push) **no aplica** en repos de cuenta personal — queda `null`; el bloqueo de push a `main` lo dan PR obligatorio + `enforce_admins`.
+`restrictions` (allowlist de push) **no aplica** en repos de cuenta personal — queda `null`; el bloqueo de push a `main` para la célula lo dan **PR obligatorio + 1 approval + Code Owners**.
 
 ## Reglas configuradas
 
-### `main` (estricta)
+### `main` (estricta para la célula; bypass admin consciente)
 
 - Require a pull request before merging
 - Required approving reviews: **1**
 - Require review from **Code Owners** (`.github/CODEOWNERS` → `@Dacadev97`)
 - Dismiss stale reviews when new commits are pushed
-- Enforce for administrators (`enforce_admins: true`) — sin bypass
+- **`enforce_admins: false` (permanente en este repo académico)** — Davidson es el único admin/owner; si `true`, no puede mergear sus propios syncs `develop→main` (nadie más puede aprobar). Con `false`, el resto de la célula sigue obligado a PR + review; el owner puede bypass solo para syncs/admin.
 - Block force pushes
 - Block deletions
 - Require conversation resolution before merging
@@ -38,6 +38,14 @@ Configurado vía API (`gh`) el **2026-09-13** sobre el repo privado.
   - `Assemble debug APK`
   - `Android Lint`
   - *No* se exige `Unit tests (TDD contract)` todavía: el contrato está en **rojo a propósito**; activarlo cuando la célula lo verdee
+
+### Sync `develop` → `main` (owner)
+
+Flujo normal: PR + CI verde. Si Code Owners se bloquea a sí mismo (cuenta personal, único reviewer):
+
+1. Preferido: merge del PR con bypass de admin (`gh pr merge <n> --admin`) **solo si el token lo permite**.
+2. Si `--admin` no basta: bajar temporalmente `required_approving_review_count` a `0`, mergear, restaurar a `1` + Code Owners, dejando **`enforce_admins: false`**.
+3. No uses force-push a `main`.
 
 ### `develop` (trabajo de la célula)
 
@@ -51,7 +59,7 @@ Configurado vía API (`gh`) el **2026-09-13** sobre el repo privado.
 
 **Settings → Branches → Add/Edit branch protection rule**
 
-1. Pattern `main`: PR required, 1 approval, Code Owners, Dismiss stale, Include administrators, status checks (`Assemble debug APK`, `Android Lint`), Block force pushes / deletions, Require conversation resolution.
+1. Pattern `main`: PR required, 1 approval, Code Owners, Dismiss stale, **Do not include administrators** (`enforce_admins: false`), status checks (`Assemble debug APK`, `Android Lint`), Block force pushes / deletions, Require conversation resolution.
 2. Pattern `develop`: Allow force pushes **off**, Allow deletions **off**; no exigir PR.
 
 ## Otras restricciones recomendadas
