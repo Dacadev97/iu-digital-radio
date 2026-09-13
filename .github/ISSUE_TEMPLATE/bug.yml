@@ -1,0 +1,28 @@
+name: Bug report
+description: Reportar un defecto funcional o de CI
+labels: ["bug", "qa"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Resumen
+      description: Qué falló y en qué paso del MVP
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severidad
+      options: [blocker, high, medium, low]
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Pasos para reproducir
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Entorno (emulador / dispositivo / CI)

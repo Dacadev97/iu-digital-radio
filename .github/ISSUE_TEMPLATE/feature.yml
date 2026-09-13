@@ -1,0 +1,34 @@
+name: User Story / Feature
+description: Historia de usuario o feature del backlog PO
+labels: ["enhancement", "po"]
+body:
+  - type: input
+    id: title_rf
+    attributes:
+      label: RF relacionado (ej. RF-04)
+  - type: textarea
+    id: story
+    attributes:
+      label: Historia
+      description: "Como… quiero… para…"
+    validations:
+      required: true
+  - type: textarea
+    id: ac
+    attributes:
+      label: Criterios de aceptación
+    validations:
+      required: true
+  - type: dropdown
+    id: squad
+    attributes:
+      label: Squad responsable
+      options:
+        - PO / Tech Lead
+        - UI/UX Compose
+        - State & Logic
+        - Hardware & Permissions
+        - Audio & API
+        - QA & DevOps / Release
+    validations:
+      required: true
