@@ -52,13 +52,21 @@ Detalle de DoD por rol: [docs/ROLES.md](docs/ROLES.md).
 main ← develop ← feature/<rol>-<issue>
 ```
 
-1. `git clone` el repo (o fork) y checkout **`develop`**.
+| Rama | Compañeros de la célula | Davidson (`@Dacadev97`) |
+|------|-------------------------|-------------------------|
+| `main` | **Sin push.** Solo PR; él aprueba y mergea | Único aprobador / release |
+| `develop` | Pueden **pushear** (o PR desde `feature/*`) | Aprueba PRs a `develop` si los hay |
+| `feature/*` | Trabajo diario recomendado | — |
+
+1. `git clone` el repo y checkout **`develop`**.
 2. Crea rama: `feature/ui-rf01`, `feature/hardware-rf03`, etc.
 3. Implementa **solo** lo de tu issue hasta que pase tu test.
-4. Abre **PR → `develop`**. CI debe quedar verde en tu alcance (ideal: suite completa al integrar).
-5. Tras review, merge. Release APK: workflow manual **Release APK**.
+4. Ideal: abre **PR → `develop`**. CI assemble/lint en verde; tests TDD según tu RF.
+5. **Solo Davidson** aprueba merges (sobre todo `develop` → `main`). Release APK: workflow manual **Release APK**.
 
-**No merges a `main`/`develop` con CI en rojo** (salvo el estado inicial del contrato TDD que ya está en rojo a propósito en `develop` hasta que la célula lo verdee).
+Detalle: [docs/BRANCH_PROTECTION.md](docs/BRANCH_PROTECTION.md).
+
+**No pushees a `main`.** No hagas force-push a `develop`/`main`. El contrato TDD puede estar en rojo al inicio a propósito hasta que la célula lo verdee.
 
 ## TDD (Red → Green → Refactor)
 
@@ -111,6 +119,7 @@ JDK **17** + Android SDK. Guía setup: [CONTRIBUTING.md](CONTRIBUTING.md).
 | [BACKLOG.md](docs/BACKLOG.md) | Mapa RF / PLAT |
 | [QA_CHECKLIST.md](docs/QA_CHECKLIST.md) | Smoke emulador/dispositivo |
 | [GUIA_F30.md](docs/GUIA_F30.md) | Resumen guía académica |
+| [BRANCH_PROTECTION.md](docs/BRANCH_PROTECTION.md) | Reglas de `main` / `develop` |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Setup + PR paso a paso |
 
 **Contacto:** Davidson (QA & DevOps / Release de la célula) — dudas de repo, CI, Project board o tests.
