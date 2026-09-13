@@ -10,6 +10,7 @@ App Android (**Kotlin**) — Evidencia **F30** · IU Digital de Antioquia · mod
 |---------|-----|
 | Repo | https://github.com/Dacadev97/iu-digital-radio (**privado**) |
 | **Project board** | https://github.com/users/Dacadev97/projects/4 |
+| **Documento escrito de la célula** | [Google Docs](https://docs.google.com/document/d/1A2VFSnmZf0X946tLOFOfcxVCrduWtBdiIYpUAiPPZgo/edit?usp=sharing) → PDF técnico Canvas |
 | Issues | https://github.com/Dacadev97/iu-digital-radio/issues |
 | Actions (CI) | https://github.com/Dacadev97/iu-digital-radio/actions |
 | QA & DevOps / Release | **Davidson Cadavid** |

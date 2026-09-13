@@ -13,4 +13,7 @@ https://drive.google.com/file/d/1luXack_QE6sWWNzLQiaxlHG5TQhy_G5s/view
 
 Canvas assignment: curso `28457` · assignment `393386` · vence 2026-09-20 23:59.
 
-Onboarding de la célula: [ONBOARDING.md](ONBOARDING.md) · [ROLES.md](ROLES.md)
+**Documento escrito de la célula (Google Docs)** — borrador del PDF técnico grupal:  
+https://docs.google.com/document/d/1A2VFSnmZf0X946tLOFOfcxVCrduWtBdiIYpUAiPPZgo/edit?usp=sharing
+
+Onboarding de la célula: [ONBOARDING.md](ONBOARDING.md) · [ROLES.md](ROLES.md) · [PARA_EL_EQUIPO.md](PARA_EL_EQUIPO.md)
