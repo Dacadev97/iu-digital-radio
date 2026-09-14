@@ -20,7 +20,7 @@ Antes de codear: elige un rol libre → reclama el issue en el board → **pon t
 
 | Rol | Nombre (compañero/a) | Issues típicos | GitHub user |
 |-----|----------------------|----------------|-------------|
-| UI/UX Compose | _pendiente_ | #1 #6 | |
+| UI/UX Compose | _pendiente_ | #1 #6 | Kamilo |
 | State & Logic | _pendiente_ | #4 | |
 | Hardware & Permissions | _pendiente_ | #2 #3 #5 | |
 | Audio & API | _pendiente_ | #7 | |
