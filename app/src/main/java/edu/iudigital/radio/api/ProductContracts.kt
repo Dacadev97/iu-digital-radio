@@ -8,7 +8,7 @@ package edu.iudigital.radio.api
 
 /** RF-01 — poner `true` cuando exista la home Compose del MVP. */
 object ComposeUiContract {
-    const val homeScreenImplemented: Boolean = false
+    const val homeScreenImplemented: Boolean = true
 }
 
 /** RF-02 — cámara de perfil. */
@@ -45,11 +45,40 @@ data class Station(
  * RF-06 — catálogo. Sin datos a propósito: el getter lanza hasta que UI/Audio implemente.
  */
 object StationCatalog {
-    val defaults: List<Station>
-        get() = throw NotImplementedError(
-            "RF-06: implementar StationCatalog.defaults con ≥5 emisoras. Ver docs/ROLES.md"
+    val defaults: List<Station> = listOf(
+        Station(
+            id = "iu-live",
+            name = "IU Digital Radio",
+            streamUrl = "https://stream.zeno.fm/iu-digital-radio",
+            genre = "Institucional"
+        ),
+        Station(
+            id = "campus-pop",
+            name = "Campus Pop",
+            streamUrl = "https://stream.zeno.fm/campus-pop",
+            genre = "Pop"
+        ),
+        Station(
+            id = "rock-classic",
+            name = "Rock Clasico",
+            streamUrl = "https://stream.zeno.fm/rock-classic",
+            genre = "Rock"
+        ),
+        Station(
+            id = "urbana",
+            name = "Frecuencia Urbana",
+            streamUrl = "https://stream.zeno.fm/frecuencia-urbana",
+            genre = "Urbana"
+        ),
+        Station(
+            id = "electro-night",
+            name = "Electro Night",
+            streamUrl = "https://stream.zeno.fm/electro-night",
+            genre = "Electronica"
         )
+    )
 }
+
 
 /**
  * Punto de entrada para tests. Sin stubs: NotImplementedError hasta el PR del rol en la célula.
