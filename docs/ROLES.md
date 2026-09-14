@@ -22,7 +22,7 @@ Antes de codear: elige un rol libre → reclama el issue en el board → **pon t
 |-----|----------------------|----------------|-------------|
 | UI/UX Compose | _pendiente_ | #1 #6 | Kamilo |
 | State & Logic | _pendiente_ | #4 | |
-| Hardware & Permissions | _pendiente_ | #2 #3 #5 | |
+| Hardware & Permissions | _pendiente_ | #2 #3 #5 |Victor |
 | Audio & API | _pendiente_ | #7 | |
 | PO (Product Owner) | Davidson Cadavid | Backlog, prioridades, AC | Dacadev97 |
 | PM (Project Manager) | Davidson Cadavid | Board, kickoff #17, seguimiento | Dacadev97 |
