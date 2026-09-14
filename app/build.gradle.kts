@@ -40,6 +40,7 @@ android {
 dependencies {
     // Shell mínimo: sin Compose, Media3 ni icons. Los squads los añaden en sus PRs.
     implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.media3:media3-exoplayer:1.4.1")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.google.truth:truth:1.4.2")
