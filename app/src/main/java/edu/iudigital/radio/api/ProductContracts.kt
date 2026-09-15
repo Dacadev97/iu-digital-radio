@@ -1,5 +1,9 @@
 package edu.iudigital.radio.api
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+
 /**
  * Contratos vacíos del MVP (sin implementación).
  * Cada rol de la célula crea las clases reales en su PR hasta verdear los tests RF.
@@ -85,12 +89,41 @@ object StationCatalog {
  */
 object Product {
     fun profileCamera(): ProfileCamera =
-        throw NotImplementedError(
-            "RF-02: rol Hardware — implementar ProfileCamera. Ver docs/ROLES.md"
-        )
+        ProfileCameraImpl()
 
-    fun radioSession(@Suppress("UNUSED_PARAMETER") haptic: HapticPort = HapticPort { }): RadioSession =
-        throw NotImplementedError(
-            "RF-04/RF-05/RF-07: roles State/Audio/Hardware — implementar RadioSession. Ver docs/ROLES.md"
-        )
+    fun radioSession(haptic: HapticPort = HapticPort { }): RadioSession =
+        RadioSessionImpl(haptic)
+}
+
+class ProfileCameraImpl : ProfileCamera {
+    override var hasProfilePhoto: Boolean = false
+
+    override fun onPreviewCaptured() {
+        hasProfilePhoto = true
+    }
+}
+
+class RadioSessionImpl(private val haptic: HapticPort) : RadioSession {
+    override var isPlaying: Boolean by mutableStateOf(false)
+    override var isMuted: Boolean by mutableStateOf(false)
+    override var selectedStationId: String? by mutableStateOf(null)
+
+    override fun play() {
+        isPlaying = true
+        haptic.tick()
+    }
+
+    override fun pause() {
+        isPlaying = false
+        haptic.tick()
+    }
+
+    override fun toggleMute() {
+        isMuted = !isMuted
+        haptic.tick()
+    }
+
+    override fun selectStation(stationId: String) {
+        selectedStationId = stationId
+    }
 }
