@@ -1,16 +1,15 @@
 package edu.iudigital.radio
 
-import android.app.Activity
 import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import edu.iudigital.radio.ui.RadioHomeScreen
 
-/**
- * Shell vacío — casa de la célula: solo DevOps + tests (TDD).
- * Rol UI/UX (RF-01): reemplazar por UI 100% Jetpack Compose.
- * Ver docs/ROLES.md y docs/ONBOARDING.md.
- */
-class MainActivity : Activity() {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Sin UI de producto. Implementar en PR de feature.
+        setContent {
+            RadioHomeScreen()
+        }
     }
 }
