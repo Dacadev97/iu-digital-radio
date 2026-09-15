@@ -33,10 +33,11 @@ El repo es un **shell DevOps** (casa de la célula): no hay implementación de p
 
 | Destino | Job Unit tests (TDD contract) |
 |---------|-------------------------------|
-| PR / push a **`develop`** | **Informativo** (`continue-on-error`): falla si faltan RF, pero no bloquea el merge de un PR parcial |
-| PR / push a **`main`** | **Bloqueante** (required check): no mergear release con el contrato en rojo |
+| **Push a cualquier rama** (`feature/*`, `develop`, `main`, …) | Se ejecuta el workflow completo |
+| PR / push a **`develop`** (y demás ramas ≠ `main`) | Unit tests **informativos** (`continue-on-error`): falla si faltan RF, pero no bloquea PRs parciales |
+| PR / push a **`main`** | Unit tests **bloqueantes** (required check): no mergear release con el contrato en rojo |
 
-Assemble + Lint siguen siendo obligatorios en ambos flujos de calidad.
+Assemble + Lint siguen validando que el stub compile en todos los destinos.
 
 ## Regla
 
