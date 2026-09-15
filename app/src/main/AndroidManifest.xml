@@ -7,6 +7,10 @@
       Ver docs/ROLES.md — el test Rf03PermissionsTest falla hasta entonces.
     -->
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@android:drawable/ic_btn_speak_now"
