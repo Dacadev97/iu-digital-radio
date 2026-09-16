@@ -1,5 +1,10 @@
 package edu.iudigital.radio.ui
 
+import android.graphics.Bitmap
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,6 +49,8 @@ fun RadioHomeScreen() {
         Column(modifier = Modifier.fillMaxSize().padding(20.dp)) {
             TopBar()
             Spacer(Modifier.height(18.dp))
+            UserProfileBanner()
+            Spacer(Modifier.height(18.dp))
             ProfileHeader()
             Spacer(Modifier.height(18.dp))
             PlayerCard(
@@ -60,6 +69,55 @@ fun RadioHomeScreen() {
                 }
             }
             BottomNav()
+        }
+    }
+}
+
+@Composable
+private fun UserProfileBanner() {
+    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
+        if (it != null) bitmap = it
+    }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF162238)),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF26385F))
+                    .clickable { launcher.launch() },
+                contentAlignment = Alignment.Center
+            ) {
+                if (bitmap != null) {
+                    Image(
+                        bitmap = bitmap!!.asImageBitmap(),
+                        contentDescription = "Foto de perfil",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Icon(
+                        Icons.Default.AddAPhoto,
+                        contentDescription = "Tomar foto",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Column {
+                Text("Perfil de Usuario", color = Color.White, fontWeight = FontWeight.Bold)
+                Text("Toca para tomar foto", color = Color(0xFF8E99B6), style = MaterialTheme.typography.bodySmall)
+            }
         }
     }
 }
