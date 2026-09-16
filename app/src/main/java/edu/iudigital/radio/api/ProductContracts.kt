@@ -84,13 +84,50 @@ object StationCatalog {
  * Punto de entrada para tests. Sin stubs: NotImplementedError hasta el PR del rol en la célula.
  */
 object Product {
-    fun profileCamera(): ProfileCamera =
-        throw NotImplementedError(
-            "RF-02: rol Hardware — implementar ProfileCamera. Ver docs/ROLES.md"
-        )
+    fun profileCamera(): ProfileCamera = InMemoryProfileCamera()
 
-    fun radioSession(@Suppress("UNUSED_PARAMETER") haptic: HapticPort = HapticPort { }): RadioSession =
-        throw NotImplementedError(
-            "RF-04/RF-05/RF-07: roles State/Audio/Hardware — implementar RadioSession. Ver docs/ROLES.md"
-        )
+    fun radioSession(haptic: HapticPort = HapticPort { }): RadioSession =
+        InMemoryRadioSession(haptic)
 }
+
+private class InMemoryProfileCamera : ProfileCamera {
+    override var hasProfilePhoto: Boolean = false
+        private set
+
+    override fun onPreviewCaptured() {
+        hasProfilePhoto = true
+    }
+}
+
+private class InMemoryRadioSession(
+    private val haptic: HapticPort
+) : RadioSession {
+    override var isPlaying: Boolean = false
+        private set
+
+    override var isMuted: Boolean = false
+        private set
+
+    override var selectedStationId: String? = StationCatalog.defaults.firstOrNull()?.id
+        private set
+
+    override fun play() {
+        isPlaying = true
+        haptic.tick()
+    }
+
+    override fun pause() {
+        isPlaying = false
+        haptic.tick()
+    }
+
+    override fun toggleMute() {
+        isMuted = !isMuted
+        haptic.tick()
+    }
+
+    override fun selectStation(stationId: String) {
+        selectedStationId = stationId
+    }
+}
+

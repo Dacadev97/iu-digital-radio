@@ -6,6 +6,10 @@
       Hardware (RF-03) debe declarar CAMERA, VIBRATE e INTERNET.
       Ver docs/ROLES.md — el test Rf03PermissionsTest falla hasta entonces.
     -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
 
     <application
         android:allowBackup="true"
