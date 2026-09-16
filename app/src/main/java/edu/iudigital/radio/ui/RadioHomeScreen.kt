@@ -24,9 +24,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import edu.iudigital.radio.api.Product
+import edu.iudigital.radio.hardware.AndroidHapticPort
 
 private data class UiStation(val id: String, val name: String, val genre: String)
 
@@ -40,10 +43,17 @@ private val stations = listOf(
 
 @Composable
 fun RadioHomeScreen() {
+    val context = LocalContext.current
+    val haptic = remember { AndroidHapticPort(context) }
+    val session = remember { Product.radioSession(haptic) }
+
     var selectedId by rememberSaveable { mutableStateOf(stations.first().id) }
-    var isPlaying by rememberSaveable { mutableStateOf(false) }
-    var isMuted by rememberSaveable { mutableStateOf(false) }
     val selected = stations.first { it.id == selectedId }
+
+    // Mantener estación seleccionada sincronizada con el contrato RF-04.
+    LaunchedEffect(Unit) {
+        session.selectStation(selectedId)
+    }
 
     Surface(color = Color(0xFF07111F), modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize().padding(20.dp)) {
@@ -55,17 +65,22 @@ fun RadioHomeScreen() {
             Spacer(Modifier.height(18.dp))
             PlayerCard(
                 station = selected,
-                isPlaying = isPlaying,
-                isMuted = isMuted,
-                onPlayPause = { isPlaying = !isPlaying },
-                onMute = { isMuted = !isMuted }
+                isPlaying = session.isPlaying,
+                isMuted = session.isMuted,
+                onPlayPause = {
+                    if (session.isPlaying) session.pause() else session.play()
+                },
+                onMute = { session.toggleMute() }
             )
             Spacer(Modifier.height(18.dp))
             Text("Estaciones", color = Color.White, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(10.dp))
             LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(stations) { station ->
-                    StationRow(station, station.id == selectedId) { selectedId = station.id }
+                    StationRow(station, station.id == selectedId) {
+                        selectedId = station.id
+                        session.selectStation(station.id)
+                    }
                 }
             }
             BottomNav()
@@ -151,7 +166,6 @@ private fun ProfileHeader() {
 }
 
 @Composable
-
 private fun PlayerCard(
     station: UiStation,
     isPlaying: Boolean,
@@ -218,5 +232,3 @@ private fun BottomNav() {
 private fun RadioHomeScreenPreview() {
     RadioHomeScreen()
 }
-
-
