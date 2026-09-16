@@ -1,8 +1,10 @@
 package edu.iudigital.radio.api
 
+import android.graphics.Bitmap
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
+import edu.iudigital.radio.hardware.ProfileCameraImpl
 
 /**
  * Contratos vacíos del MVP (sin implementación).
@@ -18,7 +20,11 @@ object ComposeUiContract {
 /** RF-02 — cámara de perfil. */
 interface ProfileCamera {
     val hasProfilePhoto: Boolean
+    val avatarBitmap: Bitmap?
+    /** Contrato unitario Rf02 — marca que hay foto de perfil. */
     fun onPreviewCaptured()
+    /** Captura real desde TakePicturePreview (cancelar = no llamar). */
+    fun onPreviewCaptured(bitmap: Bitmap)
 }
 
 /** RF-05 — puerto háptico (la implementación de test vive en `src/test`). */
@@ -93,14 +99,6 @@ object Product {
 
     fun radioSession(haptic: HapticPort = HapticPort { }): RadioSession =
         RadioSessionImpl(haptic)
-}
-
-class ProfileCameraImpl : ProfileCamera {
-    override var hasProfilePhoto: Boolean = false
-
-    override fun onPreviewCaptured() {
-        hasProfilePhoto = true
-    }
 }
 
 class RadioSessionImpl(private val haptic: HapticPort) : RadioSession {
