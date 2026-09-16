@@ -1,11 +1,14 @@
 name: CI — Build & Test (TDD)
 
-# Unit tests son el contrato: en ROJO hasta que developers implementen el MVP.
-# assembleDebug/lint validan que el stub compile aunque los tests fallen.
+# Unit tests = contrato TDD de la célula (RF-01…07).
+# En develop/feature: informativo (continue-on-error) — un PR parcial puede dejar
+# otros RF en rojo. En main: bloqueante — no mergear release con contrato rojo.
+# assembleDebug/lint siempre validan que el stub compile.
 
 on:
   push:
-    branches: [main, develop]
+    # Toda rama (feature/*, develop, main, etc.)
+    branches: ["**"]
   pull_request:
     branches: [main, develop]
   workflow_dispatch:
@@ -18,6 +21,8 @@ jobs:
   unit-test:
     name: Unit tests (TDD contract)
     runs-on: ubuntu-latest
+    # Informativo salvo en main (push o PR cuyo base sea main).
+    continue-on-error: ${{ github.ref != 'refs/heads/main' && github.base_ref != 'main' }}
     steps:
       - uses: actions/checkout@v4
 

@@ -20,9 +20,9 @@ Antes de codear: elige un rol libre → reclama el issue en el board → **pon t
 
 | Rol | Nombre (compañero/a) | Issues típicos | GitHub user |
 |-----|----------------------|----------------|-------------|
-| UI/UX Compose | _pendiente_ | #1 #6 | |
+| UI/UX Compose | Camilo Velásquez | #1 #6 | Kamilo |
 | State & Logic | _pendiente_ | #4 | |
-| Hardware & Permissions | _pendiente_ | #2 #3 #5 | |
+| Hardware & Permissions |Victor | #2 #3 #5 |Victor-Quiceno |
 | Audio & API | _pendiente_ | #7 | |
 | PO (Product Owner) | Davidson Cadavid | Backlog, prioridades, AC | Dacadev97 |
 | PM (Project Manager) | Davidson Cadavid | Board, kickoff #17, seguimiento | Dacadev97 |

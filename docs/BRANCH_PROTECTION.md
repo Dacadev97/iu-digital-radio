@@ -37,7 +37,7 @@ Configurado vía API (`gh`) el **2026-09-13** sobre el repo privado.
 - Required status checks (strict):
   - `Assemble debug APK`
   - `Android Lint`
-  - *No* se exige `Unit tests (TDD contract)` todavía: el contrato está en **rojo a propósito**; activarlo cuando la célula lo verdee
+  - `Unit tests (TDD contract)` — **bloqueante solo en `main`** (release). En PRs a `develop` el mismo job es informativo (`continue-on-error`) para no frenar PRs parciales por RF ajenos todavía en rojo.
 
 ### Sync `develop` → `main` (owner)
 
@@ -59,7 +59,7 @@ Flujo normal: PR + CI verde. Si Code Owners se bloquea a sí mismo (cuenta perso
 
 **Settings → Branches → Add/Edit branch protection rule**
 
-1. Pattern `main`: PR required, 1 approval, Code Owners, Dismiss stale, **Do not include administrators** (`enforce_admins: false`), status checks (`Assemble debug APK`, `Android Lint`), Block force pushes / deletions, Require conversation resolution.
+1. Pattern `main`: PR required, 1 approval, Code Owners, Dismiss stale, **Do not include administrators** (`enforce_admins: false`), status checks (`Assemble debug APK`, `Android Lint`, `Unit tests (TDD contract)`), Block force pushes / deletions, Require conversation resolution.
 2. Pattern `develop`: Allow force pushes **off**, Allow deletions **off**; no exigir PR.
 
 ## Identidad Git (sin Cursor Agent en contributors)

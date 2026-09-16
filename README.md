@@ -65,12 +65,12 @@ main ← develop ← feature/<rol>-<issue>
 1. `git clone` el repo y checkout **`develop`**.
 2. Crea rama: `feature/ui-rf01`, `feature/hardware-rf03`, etc.
 3. Implementa **solo** lo de tu issue hasta que pase tu test.
-4. Ideal: abre **PR → `develop`**. CI assemble/lint en verde; tests TDD según tu RF.
-5. **Solo Davidson** aprueba merges (sobre todo `develop` → `main`). Release APK: workflow manual **Release APK**.
+4. Ideal: abre **PR → `develop`**. CI **Assemble** + **Lint** en verde. El job **Unit tests (TDD contract)** corre todos los RF; en `develop` es **informativo** (no bloquea si fallan RF de otros roles). Tu test de issue debe pasar en local.
+5. **Solo Davidson** aprueba merges (sobre todo `develop` → `main`). En **`main`** el contrato TDD **sí bloquea**: no hay release con la suite en rojo. Release APK: workflow manual **Release APK**.
 
 Detalle: [docs/BRANCH_PROTECTION.md](docs/BRANCH_PROTECTION.md).
 
-**No pushees a `main`.** No hagas force-push a `develop`/`main`. El contrato TDD puede estar en rojo al inicio a propósito hasta que la célula lo verdee.
+**No pushees a `main`.** No hagas force-push a `develop`/`main`. En `develop` el rojo de RF ajenos es esperado; el verde total se exige al merge a `main`.
 
 ## TDD (Red → Green → Refactor)
 
