@@ -1,6 +1,5 @@
 package edu.iudigital.radio.ui
 
-import android.graphics.Bitmap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
@@ -90,9 +89,12 @@ fun RadioHomeScreen() {
 
 @Composable
 private fun UserProfileBanner() {
-    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
-        if (it != null) bitmap = it
+    val camera = remember { Product.profileCamera() }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
+        // Cancelar (null) no debe crashear ni marcar foto.
+        if (bitmap != null) {
+            camera.onPreviewCaptured(bitmap)
+        }
     }
 
     Card(
@@ -112,9 +114,10 @@ private fun UserProfileBanner() {
                     .clickable { launcher.launch() },
                 contentAlignment = Alignment.Center
             ) {
-                if (bitmap != null) {
+                val avatar = camera.avatarBitmap
+                if (avatar != null) {
                     Image(
-                        bitmap = bitmap!!.asImageBitmap(),
+                        bitmap = avatar.asImageBitmap(),
                         contentDescription = "Foto de perfil",
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
@@ -131,7 +134,11 @@ private fun UserProfileBanner() {
             Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Text("Perfil de Usuario", color = Color.White, fontWeight = FontWeight.Bold)
-                Text("Toca para tomar foto", color = Color(0xFF8E99B6), style = MaterialTheme.typography.bodySmall)
+                Text(
+                    if (camera.hasProfilePhoto) "Foto lista" else "Toca para tomar foto",
+                    color = Color(0xFF8E99B6),
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
         }
     }
