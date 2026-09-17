@@ -1,5 +1,6 @@
 package edu.iudigital.radio.ui
 
+import android.graphics.Bitmap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
@@ -12,6 +13,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -23,12 +26,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import edu.iudigital.radio.api.Product
-import edu.iudigital.radio.hardware.AndroidHapticPort
 
 private data class UiStation(val id: String, val name: String, val genre: String)
 
@@ -42,15 +43,12 @@ private val stations = listOf(
 
 @Composable
 fun RadioHomeScreen() {
-    val context = LocalContext.current
-    val haptic = remember { AndroidHapticPort(context) }
-    val session = remember { Product.radioSession(haptic) }
+    val session = remember { Product.radioSession() }
 
     var selectedId by rememberSaveable { mutableStateOf(stations.first().id) }
     val selected = stations.first { it.id == selectedId }
 
-    // Mantener estación seleccionada sincronizada con el contrato RF-04.
-    LaunchedEffect(Unit) {
+    LaunchedEffect(selectedId) {
         session.selectStation(selectedId)
     }
 
@@ -89,11 +87,11 @@ fun RadioHomeScreen() {
 
 @Composable
 private fun UserProfileBanner() {
-    val camera = remember { Product.profileCamera() }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
-        // Cancelar (null) no debe crashear ni marcar foto.
-        if (bitmap != null) {
-            camera.onPreviewCaptured(bitmap)
+    var photoBitmap by remember { mutableStateOf<Bitmap?>(null) }
+
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { capturedBitmap ->
+        if (capturedBitmap != null) {
+            photoBitmap = capturedBitmap
         }
     }
 
@@ -114,10 +112,10 @@ private fun UserProfileBanner() {
                     .clickable { launcher.launch() },
                 contentAlignment = Alignment.Center
             ) {
-                val avatar = camera.avatarBitmap
-                if (avatar != null) {
+                val currentPhoto = photoBitmap
+                if (currentPhoto != null) {
                     Image(
-                        bitmap = avatar.asImageBitmap(),
+                        bitmap = currentPhoto.asImageBitmap(),
                         contentDescription = "Foto de perfil",
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
@@ -135,7 +133,7 @@ private fun UserProfileBanner() {
             Column {
                 Text("Perfil de Usuario", color = Color.White, fontWeight = FontWeight.Bold)
                 Text(
-                    if (camera.hasProfilePhoto) "Foto lista" else "Toca para tomar foto",
+                    if (photoBitmap != null) "Foto lista" else "Toca para tomar foto",
                     color = Color(0xFF8E99B6),
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -180,7 +178,6 @@ private fun PlayerCard(
     onPlayPause: () -> Unit,
     onMute: () -> Unit
 ) {
-
     Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF101A2E)), shape = RoundedCornerShape(24.dp)) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth().padding(22.dp)) {
             Box(
@@ -200,7 +197,7 @@ private fun PlayerCard(
                 }
                 IconButton(onClick = {}) { Icon(Icons.Default.SkipNext, null, tint = Color.White) }
                 IconButton(onClick = onMute) {
-                    Icon(if (isMuted) Icons.Default.VolumeOff else Icons.Default.VolumeUp, null, tint = Color.White)
+                    Icon(if (isMuted) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp, null, tint = Color.White)
                 }
             }
         }

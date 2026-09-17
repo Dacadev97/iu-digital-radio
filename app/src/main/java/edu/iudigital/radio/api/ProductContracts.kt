@@ -95,7 +95,9 @@ object StationCatalog {
  */
 object Product {
     fun profileCamera(): ProfileCamera =
-        ProfileCameraImpl()
+        throw NotImplementedError(
+            "RF-02: rol Hardware — implementar ProfileCamera. Ver docs/ROLES.md"
+        )
 
     fun radioSession(haptic: HapticPort = HapticPort { }): RadioSession =
         RadioSessionImpl(haptic)
