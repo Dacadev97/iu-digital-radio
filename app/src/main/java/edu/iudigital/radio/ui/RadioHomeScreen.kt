@@ -91,6 +91,7 @@ fun RadioHomeScreen() {
 private fun UserProfileBanner() {
     val camera = remember { Product.profileCamera() }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
+        // Cancelar (null) no debe crashear ni marcar foto.
         if (bitmap != null) {
             camera.onPreviewCaptured(bitmap)
         }
