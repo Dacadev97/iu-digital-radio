@@ -89,18 +89,12 @@ object StationCatalog {
  */
 object Product {
     fun profileCamera(): ProfileCamera =
-        ProfileCameraImpl()
+        throw NotImplementedError(
+            "RF-02: rol Hardware — implementar ProfileCamera. Ver docs/ROLES.md"
+        )
 
     fun radioSession(haptic: HapticPort = HapticPort { }): RadioSession =
         RadioSessionImpl(haptic)
-}
-
-class ProfileCameraImpl : ProfileCamera {
-    override var hasProfilePhoto: Boolean = false
-
-    override fun onPreviewCaptured() {
-        hasProfilePhoto = true
-    }
 }
 
 class RadioSessionImpl(private val haptic: HapticPort) : RadioSession {

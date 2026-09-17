@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import edu.iudigital.radio.api.Product
 
 private data class UiStation(val id: String, val name: String, val genre: String)
 
@@ -33,9 +34,10 @@ private val stations = listOf(
 
 @Composable
 fun RadioHomeScreen() {
-    var selectedId by rememberSaveable { mutableStateOf(stations.first().id) }
-    var isPlaying by rememberSaveable { mutableStateOf(false) }
-    var isMuted by rememberSaveable { mutableStateOf(false) }
+    val radioSession = remember { Product.radioSession() }
+    val selectedId = radioSession.selectedStationId ?: stations.first().id
+    val isPlaying = radioSession.isPlaying
+    val isMuted = radioSession.isMuted
     val selected = stations.first { it.id == selectedId }
 
     Surface(color = Color(0xFF07111F), modifier = Modifier.fillMaxSize()) {
@@ -48,15 +50,19 @@ fun RadioHomeScreen() {
                 station = selected,
                 isPlaying = isPlaying,
                 isMuted = isMuted,
-                onPlayPause = { isPlaying = !isPlaying },
-                onMute = { isMuted = !isMuted }
+                onPlayPause = {
+                    if (radioSession.isPlaying) radioSession.pause() else radioSession.play()
+                },
+                onMute = { radioSession.toggleMute() }
             )
             Spacer(Modifier.height(18.dp))
             Text("Estaciones", color = Color.White, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(10.dp))
             LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(stations) { station ->
-                    StationRow(station, station.id == selectedId) { selectedId = station.id }
+                    StationRow(station, station.id == selectedId) {
+                        radioSession.selectStation(station.id)
+                    }
                 }
             }
             BottomNav()
