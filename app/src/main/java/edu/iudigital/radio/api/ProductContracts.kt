@@ -1,5 +1,11 @@
 package edu.iudigital.radio.api
 
+import android.graphics.Bitmap
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import edu.iudigital.radio.hardware.ProfileCameraImpl
+
 /**
  * Contratos vacíos del MVP (sin implementación).
  * Cada rol de la célula crea las clases reales en su PR hasta verdear los tests RF.
@@ -14,7 +20,11 @@ object ComposeUiContract {
 /** RF-02 — cámara de perfil. */
 interface ProfileCamera {
     val hasProfilePhoto: Boolean
+    val avatarBitmap: Bitmap?
+    /** Contrato unitario Rf02 — marca que hay foto de perfil. */
     fun onPreviewCaptured()
+    /** Captura real desde TakePicturePreview (cancelar = no llamar). */
+    fun onPreviewCaptured(bitmap: Bitmap)
 }
 
 /** RF-05 — puerto háptico (la implementación de test vive en `src/test`). */
@@ -84,32 +94,17 @@ object StationCatalog {
  * Punto de entrada para tests. Sin stubs: NotImplementedError hasta el PR del rol en la célula.
  */
 object Product {
-    fun profileCamera(): ProfileCamera = InMemoryProfileCamera()
+    fun profileCamera(): ProfileCamera =
+        ProfileCameraImpl()
 
     fun radioSession(haptic: HapticPort = HapticPort { }): RadioSession =
-        InMemoryRadioSession(haptic)
+        RadioSessionImpl(haptic)
 }
 
-private class InMemoryProfileCamera : ProfileCamera {
-    override var hasProfilePhoto: Boolean = false
-        private set
-
-    override fun onPreviewCaptured() {
-        hasProfilePhoto = true
-    }
-}
-
-private class InMemoryRadioSession(
-    private val haptic: HapticPort
-) : RadioSession {
-    override var isPlaying: Boolean = false
-        private set
-
-    override var isMuted: Boolean = false
-        private set
-
-    override var selectedStationId: String? = StationCatalog.defaults.firstOrNull()?.id
-        private set
+class RadioSessionImpl(private val haptic: HapticPort) : RadioSession {
+    override var isPlaying: Boolean by mutableStateOf(false)
+    override var isMuted: Boolean by mutableStateOf(false)
+    override var selectedStationId: String? by mutableStateOf(null)
 
     override fun play() {
         isPlaying = true
@@ -130,4 +125,3 @@ private class InMemoryRadioSession(
         selectedStationId = stationId
     }
 }
-

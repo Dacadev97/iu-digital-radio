@@ -1,6 +1,5 @@
 package edu.iudigital.radio.ui
 
-import android.graphics.Bitmap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
@@ -24,9 +23,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import edu.iudigital.radio.api.Product
+import edu.iudigital.radio.hardware.AndroidHapticPort
 
 private data class UiStation(val id: String, val name: String, val genre: String)
 
@@ -40,10 +42,17 @@ private val stations = listOf(
 
 @Composable
 fun RadioHomeScreen() {
+    val context = LocalContext.current
+    val haptic = remember { AndroidHapticPort(context) }
+    val session = remember { Product.radioSession(haptic) }
+
     var selectedId by rememberSaveable { mutableStateOf(stations.first().id) }
-    var isPlaying by rememberSaveable { mutableStateOf(false) }
-    var isMuted by rememberSaveable { mutableStateOf(false) }
     val selected = stations.first { it.id == selectedId }
+
+    // Mantener estación seleccionada sincronizada con el contrato RF-04.
+    LaunchedEffect(Unit) {
+        session.selectStation(selectedId)
+    }
 
     Surface(color = Color(0xFF07111F), modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize().padding(20.dp)) {
@@ -55,17 +64,22 @@ fun RadioHomeScreen() {
             Spacer(Modifier.height(18.dp))
             PlayerCard(
                 station = selected,
-                isPlaying = isPlaying,
-                isMuted = isMuted,
-                onPlayPause = { isPlaying = !isPlaying },
-                onMute = { isMuted = !isMuted }
+                isPlaying = session.isPlaying,
+                isMuted = session.isMuted,
+                onPlayPause = {
+                    if (session.isPlaying) session.pause() else session.play()
+                },
+                onMute = { session.toggleMute() }
             )
             Spacer(Modifier.height(18.dp))
             Text("Estaciones", color = Color.White, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(10.dp))
             LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(stations) { station ->
-                    StationRow(station, station.id == selectedId) { selectedId = station.id }
+                    StationRow(station, station.id == selectedId) {
+                        selectedId = station.id
+                        session.selectStation(station.id)
+                    }
                 }
             }
             BottomNav()
@@ -75,9 +89,12 @@ fun RadioHomeScreen() {
 
 @Composable
 private fun UserProfileBanner() {
-    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
-        if (it != null) bitmap = it
+    val camera = remember { Product.profileCamera() }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
+        // Cancelar (null) no debe crashear ni marcar foto.
+        if (bitmap != null) {
+            camera.onPreviewCaptured(bitmap)
+        }
     }
 
     Card(
@@ -97,9 +114,10 @@ private fun UserProfileBanner() {
                     .clickable { launcher.launch() },
                 contentAlignment = Alignment.Center
             ) {
-                if (bitmap != null) {
+                val avatar = camera.avatarBitmap
+                if (avatar != null) {
                     Image(
-                        bitmap = bitmap!!.asImageBitmap(),
+                        bitmap = avatar.asImageBitmap(),
                         contentDescription = "Foto de perfil",
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
@@ -116,7 +134,11 @@ private fun UserProfileBanner() {
             Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Text("Perfil de Usuario", color = Color.White, fontWeight = FontWeight.Bold)
-                Text("Toca para tomar foto", color = Color(0xFF8E99B6), style = MaterialTheme.typography.bodySmall)
+                Text(
+                    if (camera.hasProfilePhoto) "Foto lista" else "Toca para tomar foto",
+                    color = Color(0xFF8E99B6),
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
         }
     }
@@ -151,7 +173,6 @@ private fun ProfileHeader() {
 }
 
 @Composable
-
 private fun PlayerCard(
     station: UiStation,
     isPlaying: Boolean,
@@ -218,5 +239,3 @@ private fun BottomNav() {
 private fun RadioHomeScreenPreview() {
     RadioHomeScreen()
 }
-
-
