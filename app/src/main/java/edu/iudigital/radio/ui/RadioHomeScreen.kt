@@ -1,5 +1,9 @@
 package edu.iudigital.radio.ui
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,10 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import edu.iudigital.radio.api.Product
+import edu.iudigital.radio.hardware.AndroidHapticPort
 
 private data class UiStation(val id: String, val name: String, val genre: String)
 
@@ -34,26 +42,34 @@ private val stations = listOf(
 
 @Composable
 fun RadioHomeScreen() {
-    val radioSession = remember { Product.radioSession() }
-    val selectedId = radioSession.selectedStationId ?: stations.first().id
-    val isPlaying = radioSession.isPlaying
-    val isMuted = radioSession.isMuted
+    val context = LocalContext.current
+    val haptic = remember { AndroidHapticPort(context) }
+    val session = remember { Product.radioSession(haptic) }
+
+    var selectedId by rememberSaveable { mutableStateOf(stations.first().id) }
     val selected = stations.first { it.id == selectedId }
+
+    // Mantener estación seleccionada sincronizada con el contrato RF-04.
+    LaunchedEffect(Unit) {
+        session.selectStation(selectedId)
+    }
 
     Surface(color = Color(0xFF07111F), modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize().padding(20.dp)) {
             TopBar()
             Spacer(Modifier.height(18.dp))
+            UserProfileBanner()
+            Spacer(Modifier.height(18.dp))
             ProfileHeader()
             Spacer(Modifier.height(18.dp))
             PlayerCard(
                 station = selected,
-                isPlaying = isPlaying,
-                isMuted = isMuted,
+                isPlaying = session.isPlaying,
+                isMuted = session.isMuted,
                 onPlayPause = {
-                    if (radioSession.isPlaying) radioSession.pause() else radioSession.play()
+                    if (session.isPlaying) session.pause() else session.play()
                 },
-                onMute = { radioSession.toggleMute() }
+                onMute = { session.toggleMute() }
             )
             Spacer(Modifier.height(18.dp))
             Text("Estaciones", color = Color.White, fontWeight = FontWeight.Bold)
@@ -61,11 +77,68 @@ fun RadioHomeScreen() {
             LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(stations) { station ->
                     StationRow(station, station.id == selectedId) {
-                        radioSession.selectStation(station.id)
+                        selectedId = station.id
+                        session.selectStation(station.id)
                     }
                 }
             }
             BottomNav()
+        }
+    }
+}
+
+@Composable
+private fun UserProfileBanner() {
+    val camera = remember { Product.profileCamera() }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
+        if (bitmap != null) {
+            camera.onPreviewCaptured(bitmap)
+        }
+    }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF162238)),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF26385F))
+                    .clickable { launcher.launch() },
+                contentAlignment = Alignment.Center
+            ) {
+                val avatar = camera.avatarBitmap
+                if (avatar != null) {
+                    Image(
+                        bitmap = avatar.asImageBitmap(),
+                        contentDescription = "Foto de perfil",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Icon(
+                        Icons.Default.AddAPhoto,
+                        contentDescription = "Tomar foto",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Column {
+                Text("Perfil de Usuario", color = Color.White, fontWeight = FontWeight.Bold)
+                Text(
+                    if (camera.hasProfilePhoto) "Foto lista" else "Toca para tomar foto",
+                    color = Color(0xFF8E99B6),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
         }
     }
 }
@@ -99,7 +172,6 @@ private fun ProfileHeader() {
 }
 
 @Composable
-
 private fun PlayerCard(
     station: UiStation,
     isPlaying: Boolean,
@@ -107,7 +179,6 @@ private fun PlayerCard(
     onPlayPause: () -> Unit,
     onMute: () -> Unit
 ) {
-
     Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF101A2E)), shape = RoundedCornerShape(24.dp)) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth().padding(22.dp)) {
             Box(
@@ -166,5 +237,3 @@ private fun BottomNav() {
 private fun RadioHomeScreenPreview() {
     RadioHomeScreen()
 }
-
-
