@@ -1,5 +1,11 @@
 package edu.iudigital.radio.api
 
+import android.graphics.Bitmap
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import edu.iudigital.radio.hardware.ProfileCameraImpl
+
 /**
  * Contratos vacíos del MVP (sin implementación).
  * Cada rol de la célula crea las clases reales en su PR hasta verdear los tests RF.
@@ -14,7 +20,11 @@ object ComposeUiContract {
 /** RF-02 — cámara de perfil. */
 interface ProfileCamera {
     val hasProfilePhoto: Boolean
+    val avatarBitmap: Bitmap?
+    /** Contrato unitario Rf02 — marca que hay foto de perfil. */
     fun onPreviewCaptured()
+    /** Captura real desde TakePicturePreview (cancelar = no llamar). */
+    fun onPreviewCaptured(bitmap: Bitmap)
 }
 
 /** RF-05 — puerto háptico (la implementación de test vive en `src/test`). */
@@ -85,12 +95,33 @@ object StationCatalog {
  */
 object Product {
     fun profileCamera(): ProfileCamera =
-        throw NotImplementedError(
-            "RF-02: rol Hardware — implementar ProfileCamera. Ver docs/ROLES.md"
-        )
+        ProfileCameraImpl()
 
-    fun radioSession(@Suppress("UNUSED_PARAMETER") haptic: HapticPort = HapticPort { }): RadioSession =
-        throw NotImplementedError(
-            "RF-04/RF-05/RF-07: roles State/Audio/Hardware — implementar RadioSession. Ver docs/ROLES.md"
-        )
+    fun radioSession(haptic: HapticPort = HapticPort { }): RadioSession =
+        RadioSessionImpl(haptic)
+}
+
+class RadioSessionImpl(private val haptic: HapticPort) : RadioSession {
+    override var isPlaying: Boolean by mutableStateOf(false)
+    override var isMuted: Boolean by mutableStateOf(false)
+    override var selectedStationId: String? by mutableStateOf(null)
+
+    override fun play() {
+        isPlaying = true
+        haptic.tick()
+    }
+
+    override fun pause() {
+        isPlaying = false
+        haptic.tick()
+    }
+
+    override fun toggleMute() {
+        isMuted = !isMuted
+        haptic.tick()
+    }
+
+    override fun selectStation(stationId: String) {
+        selectedStationId = stationId
+    }
 }
