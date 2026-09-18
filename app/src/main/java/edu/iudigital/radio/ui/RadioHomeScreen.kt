@@ -1,6 +1,5 @@
 package edu.iudigital.radio.ui
 
-import android.graphics.Bitmap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
@@ -26,10 +25,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import edu.iudigital.radio.api.Product
+import edu.iudigital.radio.hardware.AndroidHapticPort
 
 private data class UiStation(val id: String, val name: String, val genre: String)
 
@@ -43,11 +44,14 @@ private val stations = listOf(
 
 @Composable
 fun RadioHomeScreen() {
-    val session = remember { Product.radioSession() }
+    val context = LocalContext.current
+    val haptic = remember { AndroidHapticPort(context) }
+    val session = remember { Product.radioSession(haptic) }
 
     var selectedId by rememberSaveable { mutableStateOf(stations.first().id) }
     val selected = stations.first { it.id == selectedId }
 
+    // Mantener estación seleccionada sincronizada con el contrato RF-04.
     LaunchedEffect(selectedId) {
         session.selectStation(selectedId)
     }
@@ -87,11 +91,11 @@ fun RadioHomeScreen() {
 
 @Composable
 private fun UserProfileBanner() {
-    var photoBitmap by remember { mutableStateOf<Bitmap?>(null) }
-
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { capturedBitmap ->
-        if (capturedBitmap != null) {
-            photoBitmap = capturedBitmap
+    val camera = remember { Product.profileCamera() }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
+        // Cancelar (null) no debe crashear ni marcar foto.
+        if (bitmap != null) {
+            camera.onPreviewCaptured(bitmap)
         }
     }
 
@@ -112,10 +116,10 @@ private fun UserProfileBanner() {
                     .clickable { launcher.launch() },
                 contentAlignment = Alignment.Center
             ) {
-                val currentPhoto = photoBitmap
-                if (currentPhoto != null) {
+                val avatar = camera.avatarBitmap
+                if (avatar != null) {
                     Image(
-                        bitmap = currentPhoto.asImageBitmap(),
+                        bitmap = avatar.asImageBitmap(),
                         contentDescription = "Foto de perfil",
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
@@ -133,7 +137,7 @@ private fun UserProfileBanner() {
             Column {
                 Text("Perfil de Usuario", color = Color.White, fontWeight = FontWeight.Bold)
                 Text(
-                    if (photoBitmap != null) "Foto lista" else "Toca para tomar foto",
+                    if (camera.hasProfilePhoto) "Foto lista" else "Toca para tomar foto",
                     color = Color(0xFF8E99B6),
                     style = MaterialTheme.typography.bodySmall
                 )
