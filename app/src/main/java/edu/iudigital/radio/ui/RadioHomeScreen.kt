@@ -29,19 +29,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import edu.iudigital.radio.api.Product
 import edu.iudigital.radio.api.Station
+import edu.iudigital.radio.api.StationCatalog
 import edu.iudigital.radio.audio.ExoRadioSession
 import edu.iudigital.radio.hardware.AndroidHapticPort
 import edu.iudigital.radio.network.StationRepository
-
-private data class UiStation(val id: String, val name: String, val genre: String)
-
-/*private val stations = listOf(
-    UiStation("iu-live", "IU Digital Radio", "Institucional"),
-    UiStation("campus-pop", "Campus Pop", "Pop"),
-    UiStation("rock-classic", "Rock Clasico", "Rock"),
-    UiStation("frecuencia-urbana", "Frecuencia Urbana", "Urbana"),
-    UiStation("electro-night", "Electro Night", "Electronica")
-)*/
 
 @Composable
 fun RadioHomeScreen() {
@@ -62,14 +53,15 @@ fun RadioHomeScreen() {
         try {
             val fetched = repository.fetchStations()
             stations = fetched
-            session.updateStations(fetched)  // acá usamos el método nuevo
+            session.updateStations(fetched)
             val firstId = fetched.firstOrNull()?.id
             selectedId = firstId
             firstId?.let { session.selectStation(it) }
         } catch (e: Exception) {
-            // Si no hay internet, o la API falla, o lo que sea: no dejamos
-            // que la app crashee. Guardamos un mensaje simple para mostrar.
-            errorMessage = "No se pudieron cargar las estaciones. Revisa tu conexión."
+            stations = StationCatalog.defaults
+            session.updateStations(StationCatalog.defaults)
+            selectedId = StationCatalog.defaults.firstOrNull()?.id
+        errorMessage = "No se pudo conectar a Radio Browser. Mostrando catálogo local."
         } finally {
             // "finally" se ejecuta pase lo que pase (éxito o error)
             isLoading = false
@@ -90,19 +82,22 @@ fun RadioHomeScreen() {
             Spacer(Modifier.height(18.dp))
             ProfileHeader(selected?.name ?: "Cargando...")
             Spacer(Modifier.height(18.dp))
+
+            // Aviso de fallback: se muestra SIEMPRE que exista un mensaje,
+            // sin importar si además hay contenido para dibujar debajo.
+            errorMessage?.let { message ->
+                Text(message, color = Color(0xFFFF6B6B))
+                Spacer(Modifier.height(10.dp))
+            }
+
             when {
                 isLoading -> {
-                    // Mientras esperamos la respuesta de la API, mostramos
-                    // un indicador de carga en vez de una pantalla vacía o rota.
                     Box(
                         modifier = Modifier.fillMaxWidth().padding(40.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(color = Color(0xFF9B5CFF))
                     }
-                }
-                errorMessage != null -> {
-                    Text(errorMessage!!, color = Color(0xFFFF6B6B))
                 }
                 selected != null -> {
                     PlayerCard(
