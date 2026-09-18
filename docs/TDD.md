@@ -29,6 +29,16 @@ El repo es un **shell DevOps** (casa de la célula): no hay implementación de p
 - Interfaces / entry points: `app/src/main/java/edu/iudigital/radio/api/ProductContracts.kt`
 - Roles: [ROLES.md](ROLES.md) · Onboarding: [ONBOARDING.md](ONBOARDING.md)
 
+## CI
+
+| Destino | Job Unit tests (TDD contract) |
+|---------|-------------------------------|
+| **Push a cualquier rama** (`feature/*`, `develop`, `main`, …) | Se ejecuta el workflow completo |
+| PR / push a **`develop`** (y demás ramas ≠ `main`) | Unit tests **informativos** (`continue-on-error`): falla si faltan RF, pero no bloquea PRs parciales |
+| PR / push a **`main`** | Unit tests **bloqueantes** (required check): no mergear release con el contrato en rojo |
+
+Assemble + Lint siguen validando que el stub compile en todos los destinos.
+
 ## Regla
 
 No rebajar asserts para “hacer pasar” CI. Si el contrato está mal, avisa a QA/PO (Davidson).
