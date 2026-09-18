@@ -30,30 +30,54 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import edu.iudigital.radio.api.Product
+import edu.iudigital.radio.api.Station
+import edu.iudigital.radio.api.StationCatalog
+import edu.iudigital.radio.audio.ExoRadioSession
 import edu.iudigital.radio.hardware.AndroidHapticPort
-
-private data class UiStation(val id: String, val name: String, val genre: String)
-
-private val stations = listOf(
-    UiStation("iu-live", "IU Digital Radio", "Institucional"),
-    UiStation("campus-pop", "Campus Pop", "Pop"),
-    UiStation("rock-classic", "Rock Clasico", "Rock"),
-    UiStation("frecuencia-urbana", "Frecuencia Urbana", "Urbana"),
-    UiStation("electro-night", "Electro Night", "Electronica")
-)
+import edu.iudigital.radio.network.StationRepository
+import androidx.compose.ui.platform.LocalInspectionMode
 
 @Composable
 fun RadioHomeScreen() {
     val context = LocalContext.current
+    val isPreview = LocalInspectionMode.current //Evita instanciar ExoPlayer en la vista previa de Compose (Layoutlib) pasando null
+    // como contexto cuando LocalInspectionMode.current es true, previniendo el
+    // NullPointerException de AudioCapabilities que veíamos en el Preview.
     val haptic = remember { AndroidHapticPort(context) }
-    val session = remember { Product.radioSession(haptic) }
+    val session = remember { Product.radioSession(haptic, if (isPreview) null else context) }
+    val repository = remember { StationRepository() } // "remember" evita crear un StationRepository nuevo en cada re renderizado de la pantalla
 
-    var selectedId by rememberSaveable { mutableStateOf(stations.first().id) }
-    val selected = stations.first { it.id == selectedId }
+    var stations by remember { mutableStateOf<List<Station>>(emptyList()) }
+    var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    val selected = stations.firstOrNull { it.id == selectedId }
 
     // Mantener estación seleccionada sincronizada con el contrato RF-04.
-    LaunchedEffect(selectedId) {
-        session.selectStation(selectedId)
+    LaunchedEffect(Unit) {
+        try {
+            val fetched = repository.fetchStations()
+            stations = fetched
+            session.updateStations(fetched)
+            val firstId = fetched.firstOrNull()?.id
+            selectedId = firstId
+            firstId?.let { session.selectStation(it) }
+        } catch (e: Exception) {
+            stations = StationCatalog.defaults
+            session.updateStations(StationCatalog.defaults)
+            selectedId = StationCatalog.defaults.firstOrNull()?.id
+        errorMessage = "No se pudo conectar a Radio Browser. Mostrando catálogo local."
+        } finally {
+            // "finally" se ejecuta pase lo que pase (éxito o error)
+            isLoading = false
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            (session as? ExoRadioSession)?.release()
+        }
     }
 
     Surface(color = Color(0xFF07111F), modifier = Modifier.fillMaxSize()) {
@@ -62,25 +86,45 @@ fun RadioHomeScreen() {
             Spacer(Modifier.height(18.dp))
             UserProfileBanner()
             Spacer(Modifier.height(18.dp))
-            ProfileHeader()
+            ProfileHeader(selected?.name ?: "Cargando...")
             Spacer(Modifier.height(18.dp))
-            PlayerCard(
-                station = selected,
-                isPlaying = session.isPlaying,
-                isMuted = session.isMuted,
-                onPlayPause = {
-                    if (session.isPlaying) session.pause() else session.play()
-                },
-                onMute = { session.toggleMute() }
-            )
-            Spacer(Modifier.height(18.dp))
-            Text("Estaciones", color = Color.White, fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(10.dp))
-            LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                items(stations) { station ->
-                    StationRow(station, station.id == selectedId) {
-                        selectedId = station.id
-                        session.selectStation(station.id)
+
+            // Aviso de fallback: se muestra SIEMPRE que exista un mensaje,
+            // sin importar si además hay contenido para dibujar debajo.
+            errorMessage?.let { message ->
+                Text(message, color = Color(0xFFFF6B6B))
+                Spacer(Modifier.height(10.dp))
+            }
+
+            when {
+                isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(40.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = Color(0xFF9B5CFF))
+                    }
+                }
+                selected != null -> {
+                    PlayerCard(
+                        station = selected,
+                        isPlaying = session.isPlaying,
+                        isMuted = session.isMuted,
+                        onPlayPause = {
+                            if (session.isPlaying) session.pause() else session.play()
+                        },
+                        onMute = { session.toggleMute() }
+                    )
+                    Spacer(Modifier.height(18.dp))
+                    Text("Estaciones", color = Color.White, fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(10.dp))
+                    LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        items(stations) { station ->
+                            StationRow(station, station.id == selectedId) {
+                                selectedId = station.id
+                                session.selectStation(station.id)
+                            }
+                        }
                     }
                 }
             }
@@ -159,7 +203,7 @@ private fun TopBar() {
 }
 
 @Composable
-private fun ProfileHeader() {
+private fun ProfileHeader(stationName: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Box(
             contentAlignment = Alignment.Center,
@@ -168,7 +212,7 @@ private fun ProfileHeader() {
         Spacer(Modifier.width(14.dp))
         Column {
             Text("Ahora en vivo", color = Color(0xFFB8C1D9))
-            Text("IU Digital Radio", color = Color.White, fontWeight = FontWeight.Bold)
+            Text(stationName, color = Color.White, fontWeight = FontWeight.Bold)
             Text("Tu musica, siempre contigo", color = Color(0xFF8E99B6))
         }
     }
@@ -176,12 +220,13 @@ private fun ProfileHeader() {
 
 @Composable
 private fun PlayerCard(
-    station: UiStation,
+    station: Station,
     isPlaying: Boolean,
     isMuted: Boolean,
     onPlayPause: () -> Unit,
     onMute: () -> Unit
 ) {
+
     Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF101A2E)), shape = RoundedCornerShape(24.dp)) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth().padding(22.dp)) {
             Box(
@@ -209,7 +254,7 @@ private fun PlayerCard(
 }
 
 @Composable
-private fun StationRow(station: UiStation, selected: Boolean, onClick: () -> Unit) {
+private fun StationRow(station: Station, selected: Boolean, onClick: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).clickable(onClick = onClick)
             .background(if (selected) Color(0xFF26385F) else Color(0xFF101A2E)).padding(14.dp),

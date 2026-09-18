@@ -18,16 +18,16 @@ Antes de codear: elige un rol libre → reclama el issue en el board → **pon t
 
 **Cómo actualizarla:** edita esta tabla en un PR a `develop` o comenta en el issue de tu rol. **No borres filas.**
 
-| Rol | Nombre (compañero/a) | Issues típicos | GitHub user |
-|-----|----------------------|----------------|-------------|
-| UI/UX Compose | Camilo Velásquez | #1 #6 | Kamilo |
-| State & Logic | _pendiente_ | #4 | |
-| Hardware & Permissions |Victor | #2 #3 #5 |Victor-Quiceno |
-| Audio & API | _pendiente_ | #7 | |
-| PO (Product Owner) | Davidson Cadavid | Backlog, prioridades, AC | Dacadev97 |
-| PM (Project Manager) | Davidson Cadavid | Board, kickoff #17, seguimiento | Dacadev97 |
-| QA (Quality Assurance) | Davidson Cadavid | Checklist, smoke #11, gate Testing | Dacadev97 |
-| DevOps / Release | Davidson Cadavid | CI, APK #12, approvals, repo | Dacadev97 |
+| Rol | Nombre (compañero/a) | Issues típicos | GitHub user    |
+|-----|----------------------|----------------|----------------|
+| UI/UX Compose | Camilo Velásquez     | #1 #6 | Kamilo         |
+| State & Logic | Brayan y Pedro       | #4 | Pedromonvel94               |
+| Hardware & Permissions | Victor               | #2 #3 #5 | Victor-Quiceno |
+| Audio & API | Pedro Montoya        | #7 | Pedromonvel94  |
+| PO (Product Owner) | Davidson Cadavid     | Backlog, prioridades, AC | Dacadev97      |
+| PM (Project Manager) | Davidson Cadavid     | Board, kickoff #17, seguimiento | Dacadev97      |
+| QA (Quality Assurance) | Davidson Cadavid     | Checklist, smoke #11, gate Testing | Dacadev97      |
+| DevOps / Release | Davidson Cadavid     | CI, APK #12, approvals, repo | Dacadev97      |
 
 ---
 
