@@ -33,12 +33,16 @@ import edu.iudigital.radio.api.StationCatalog
 import edu.iudigital.radio.audio.ExoRadioSession
 import edu.iudigital.radio.hardware.AndroidHapticPort
 import edu.iudigital.radio.network.StationRepository
+import androidx.compose.ui.platform.LocalInspectionMode
 
 @Composable
 fun RadioHomeScreen() {
     val context = LocalContext.current
+    val isPreview = LocalInspectionMode.current //Evita instanciar ExoPlayer en la vista previa de Compose (Layoutlib) pasando null
+    // como contexto cuando LocalInspectionMode.current es true, previniendo el
+    // NullPointerException de AudioCapabilities que veíamos en el Preview.
     val haptic = remember { AndroidHapticPort(context) }
-    val session = remember { Product.radioSession(haptic, context) }
+    val session = remember { Product.radioSession(haptic, if (isPreview) null else context) }
     val repository = remember { StationRepository() } // "remember" evita crear un StationRepository nuevo en cada re renderizado de la pantalla
 
     var stations by remember { mutableStateOf<List<Station>>(emptyList()) }
