@@ -36,6 +36,10 @@ import edu.iudigital.radio.audio.ExoRadioSession
 import edu.iudigital.radio.hardware.AndroidHapticPort
 import edu.iudigital.radio.network.StationRepository
 import androidx.compose.ui.platform.LocalInspectionMode
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
+import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
 fun RadioHomeScreen() {
@@ -80,24 +84,29 @@ fun RadioHomeScreen() {
         }
     }
 
-    Surface(color = Color(0xFF07111F), modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize().padding(20.dp)) {
-            TopBar()
-            Spacer(Modifier.height(18.dp))
-            UserProfileBanner()
-            Spacer(Modifier.height(18.dp))
-            ProfileHeader(selected?.name ?: "Cargando...")
-            Spacer(Modifier.height(18.dp))
+    // Ahora todo el contenido vive en UN SOLO LazyColumn (con scroll real de punta a
+    // punta) y el BottomNav queda fijo abajo gracias a Scaffold(bottomBar = ...).
+    Scaffold(
+        containerColor = Color(0xFF07111F),
+        bottomBar = { BottomNav() }
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp)
+        ) {
+            item { TopBar() }
+            item { UserProfileBanner() }
+            item { ProfileHeader(selected?.name ?: "Cargando...") }
 
-            // Aviso de fallback: se muestra SIEMPRE que exista un mensaje,
-            // sin importar si además hay contenido para dibujar debajo.
             errorMessage?.let { message ->
-                Text(message, color = Color(0xFFFF6B6B))
-                Spacer(Modifier.height(10.dp))
+                item { Text(message, color = Color(0xFFFF6B6B)) }
             }
 
             when {
-                isLoading -> {
+                isLoading -> item {
                     Box(
                         modifier = Modifier.fillMaxWidth().padding(40.dp),
                         contentAlignment = Alignment.Center
@@ -106,40 +115,59 @@ fun RadioHomeScreen() {
                     }
                 }
                 selected != null -> {
-                    PlayerCard(
-                        station = selected,
-                        isPlaying = session.isPlaying,
-                        isMuted = session.isMuted,
-                        onPlayPause = {
-                            if (session.isPlaying) session.pause() else session.play()
-                        },
-                        onMute = { session.toggleMute() }
-                    )
-                    Spacer(Modifier.height(18.dp))
-                    Text("Estaciones", color = Color.White, fontWeight = FontWeight.Bold)
-                    Spacer(Modifier.height(10.dp))
-                    LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        items(stations) { station ->
-                            StationRow(station, station.id == selectedId) {
-                                selectedId = station.id
-                                session.selectStation(station.id)
-                            }
+                    item {
+                        PlayerCard(
+                            station = selected,
+                            isPlaying = session.isPlaying,
+                            isMuted = session.isMuted,
+                            onPlayPause = {
+                                if (session.isPlaying) session.pause() else session.play()
+                            },
+                            onMute = { session.toggleMute() }
+                        )
+                    }
+                    item { Text("Estaciones", color = Color.White, fontWeight = FontWeight.Bold) }
+                    items(stations) { station ->
+                        StationRow(station, station.id == selectedId) {
+                            selectedId = station.id
+                            session.selectStation(station.id)
                         }
                     }
                 }
             }
-            BottomNav()
         }
     }
 }
 
 @Composable
 private fun UserProfileBanner() {
+    val context = LocalContext.current
     val camera = remember { Product.profileCamera() }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
+
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
         // Cancelar (null) no debe crashear ni marcar foto.
         if (bitmap != null) {
             camera.onPreviewCaptured(bitmap)
+        }
+    }
+
+    // FIX bug cámara: TakePicturePreview abre la cámara del sistema, pero sin el
+    // permiso CAMERA concedido en tiempo de ejecución, la app de cámara se cerraba
+    // sola y regresaba al escritorio (típico en MIUI/Xiaomi). Este segundo launcher
+    // pide el permiso primero; solo si el usuario acepta, ahí sí se abre la cámara.
+    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) cameraLauncher.launch()
+    }
+
+    fun onCameraClick() {
+        val hasPermission = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (hasPermission) {
+            cameraLauncher.launch()
+        } else {
+            permissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
 
@@ -157,7 +185,7 @@ private fun UserProfileBanner() {
                     .size(50.dp)
                     .clip(CircleShape)
                     .background(Color(0xFF26385F))
-                    .clickable { launcher.launch() },
+                    .clickable { onCameraClick() },
                 contentAlignment = Alignment.Center
             ) {
                 val avatar = camera.avatarBitmap
@@ -263,8 +291,19 @@ private fun StationRow(station: Station, selected: Boolean, onClick: () -> Unit)
         Icon(Icons.Default.MusicNote, null, tint = Color(0xFF9B5CFF))
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {
-            Text(station.name, color = Color.White, fontWeight = FontWeight.SemiBold)
-            Text(station.genre, color = Color(0xFF8E99B6))
+            Text(
+                station.name,
+                color = Color.White,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                station.genre,
+                color = Color(0xFF8E99B6),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
         if (selected) Text("ON", color = Color(0xFF9B5CFF), fontWeight = FontWeight.Bold)
     }
