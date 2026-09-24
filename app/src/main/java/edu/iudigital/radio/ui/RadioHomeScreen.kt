@@ -21,7 +21,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -40,6 +39,19 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import coil.compose.AsyncImage
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 
 @Composable
 fun RadioHomeScreen() {
@@ -55,8 +67,14 @@ fun RadioHomeScreen() {
     var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var searchQuery by remember { mutableStateOf("") }
 
     val selected = stations.firstOrNull { it.id == selectedId }
+    val filteredStations = if (searchQuery.isBlank()) {
+        stations
+    } else {
+        stations.filter { it.name.contains(searchQuery, ignoreCase = true) }
+    }
 
     // Mantener estación seleccionada sincronizada con el contrato RF-04.
     LaunchedEffect(Unit) {
@@ -88,25 +106,30 @@ fun RadioHomeScreen() {
     // punta) y el BottomNav queda fijo abajo gracias a Scaffold(bottomBar = ...).
     Scaffold(
         containerColor = Color(0xFF07111F),
-        bottomBar = { BottomNav() }
     ) { innerPadding ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(18.dp)
+                .padding(20.dp)
         ) {
-            item { TopBar() }
-            item { UserProfileBanner() }
-            item { ProfileHeader(selected?.name ?: "Cargando...") }
+            TopBar(
+                searchQuery = searchQuery,
+                onSearchQueryChange = { searchQuery = it }
+            )
+            Spacer(Modifier.height(14.dp))
+            UserProfileBanner()
+            Spacer(Modifier.height(14.dp))
+            ProfileHeader(selected?.name ?: "Cargando...")
+            Spacer(Modifier.height(14.dp))
 
             errorMessage?.let { message ->
-                item { Text(message, color = Color(0xFFFF6B6B)) }
+                Text(message, color = Color(0xFFFF6B6B))
+                Spacer(Modifier.height(8.dp))
             }
 
             when {
-                isLoading -> item {
+                isLoading -> {
                     Box(
                         modifier = Modifier.fillMaxWidth().padding(40.dp),
                         contentAlignment = Alignment.Center
@@ -115,22 +138,29 @@ fun RadioHomeScreen() {
                     }
                 }
                 selected != null -> {
-                    item {
-                        PlayerCard(
-                            station = selected,
-                            isPlaying = session.isPlaying,
-                            isMuted = session.isMuted,
-                            onPlayPause = {
-                                if (session.isPlaying) session.pause() else session.play()
-                            },
-                            onMute = { session.toggleMute() }
-                        )
-                    }
-                    item { Text("Estaciones", color = Color.White, fontWeight = FontWeight.Bold) }
-                    items(stations) { station ->
-                        StationRow(station, station.id == selectedId) {
-                            selectedId = station.id
-                            session.selectStation(station.id)
+                    PlayerCard(
+                        station = selected,
+                        isPlaying = session.isPlaying,
+                        isMuted = session.isMuted,
+                        onPlayPause = {
+                            if (session.isPlaying) session.pause() else session.play()
+                        },
+                        onMute = { session.toggleMute() }
+                    )
+                    Spacer(Modifier.height(14.dp))
+                    Text("Estaciones", color = Color.White, fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(8.dp))
+                    // Caja con altura restante (weight) que SÍ tiene su propio scroll,
+                    // independiente del resto de la pantalla (que ahora no scrollea).
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        items(filteredStations) { station ->
+                            StationRow(station, station.id == selectedId) {
+                                selectedId = station.id
+                                session.selectStation(station.id)
+                            }
                         }
                     }
                 }
@@ -219,14 +249,38 @@ private fun UserProfileBanner() {
 }
 
 @Composable
-private fun TopBar() {
+private fun TopBar(
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit
+) {
+    var isSearchExpanded by remember { mutableStateOf(false) }
+
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-        Icon(Icons.Default.Menu, null, tint = Color.White)
-        Spacer(Modifier.weight(1f))
-        Icon(Icons.Default.Mic, null, tint = Color(0xFF9B5CFF))
-        Text(" IU Digital Radio", color = Color.White, fontWeight = FontWeight.Bold)
-        Spacer(Modifier.weight(1f))
-        Icon(Icons.Default.Search, null, tint = Color.White)
+        IconButton(onClick = { isSearchExpanded = !isSearchExpanded }) {
+            Icon(Icons.Default.Search, null, tint = Color.White)
+        }
+
+        if (isSearchExpanded) {
+            TextField(
+                value = searchQuery,
+                onValueChange = onSearchQueryChange,
+                placeholder = { Text("Buscar emisora...", color = Color(0xFF8E99B6)) },
+                singleLine = true,
+                modifier = Modifier.weight(1f),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color(0xFF162238),
+                    unfocusedContainerColor = Color(0xFF162238),
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedIndicatorColor = Color(0xFF9B5CFF),
+                    unfocusedIndicatorColor = Color.Transparent
+                )
+            )
+        } else {
+            Spacer(Modifier.weight(1f))
+            Icon(Icons.Default.Mic, null, tint = Color(0xFF9B5CFF))
+            Text(" IU Digital Radio", color = Color.White, fontWeight = FontWeight.Bold)
+        }
     }
 }
 
@@ -240,8 +294,55 @@ private fun ProfileHeader(stationName: String) {
         Spacer(Modifier.width(14.dp))
         Column {
             Text("Ahora en vivo", color = Color(0xFFB8C1D9))
-            Text(stationName, color = Color.White, fontWeight = FontWeight.Bold)
+            Text(
+                stationName,
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
             Text("Tu musica, siempre contigo", color = Color(0xFF8E99B6))
+        }
+    }
+}
+
+@Composable
+private fun WaveformVisualizer(isPlaying: Boolean, modifier: Modifier = Modifier) {
+    val barCount = 24
+    val infiniteTransition = rememberInfiniteTransition(label = "waveform")
+
+    // Una animación independiente por barra, cada una con duración distinta,
+    // para que no suban y bajen todas al mismo tiempo (eso se vería como un
+    // parpadeo raro, no como una onda natural).
+    val barHeights = List(barCount) { index ->
+        val duration = 380 + (index % 6) * 90
+        infiniteTransition.animateFloat(
+            initialValue = 0.15f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(durationMillis = duration, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "bar_$index"
+        )
+    }
+
+    Canvas(modifier = modifier) {
+        val barWidth = size.width / (barCount * 3f)
+        val gap = barWidth
+        val totalContentWidth = barCount * barWidth + (barCount - 1) * gap
+        val startX = (size.width - totalContentWidth) / 2f  // margen sobrante repartido en ambos lados
+
+        for (i in 0 until barCount) {
+            val heightFraction = if (isPlaying) barHeights[i].value else 0.15f
+            val barHeight = size.height * heightFraction
+            val x = startX + i * (barWidth + gap)
+            drawRoundRect(
+                color = Color(0xFF9B5CFF),
+                topLeft = Offset(x, (size.height - barHeight) / 2f),
+                size = Size(barWidth, barHeight),
+                cornerRadius = CornerRadius(barWidth / 2f, barWidth / 2f)
+            )
         }
     }
 }
@@ -254,27 +355,59 @@ private fun PlayerCard(
     onPlayPause: () -> Unit,
     onMute: () -> Unit
 ) {
-
-    Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF101A2E)), shape = RoundedCornerShape(24.dp)) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth().padding(22.dp)) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.size(150.dp).clip(CircleShape).background(
-                    Brush.radialGradient(listOf(Color(0xFF9B5CFF), Color(0xFF101A2E)))
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+        ) {
+        Card(
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF101A2E)),
+            shape = RoundedCornerShape(24.dp),
+            modifier = Modifier.fillMaxWidth(0.95f)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 22.dp, horizontal = 20.dp)
+            ) {
+                AsyncImage(
+                    model = station.logoUrl,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(90.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF26385F)),
+                    contentScale = ContentScale.Crop,
+                    error = rememberVectorPainter(Icons.Default.Radio),
+                    fallback = rememberVectorPainter(Icons.Default.Radio)
                 )
-            ) { Icon(Icons.Default.GraphicEq, null, tint = Color.White, modifier = Modifier.size(70.dp)) }
-            Spacer(Modifier.height(14.dp))
-            Text(station.name, color = Color.White, fontWeight = FontWeight.Bold)
-            Text(station.genre, color = Color(0xFF8E99B6))
-            Slider(value = if (isPlaying) 0.42f else 0.0f, onValueChange = {})
-            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = {}) { Icon(Icons.Default.SkipPrevious, null, tint = Color.White) }
-                FilledIconButton(onClick = onPlayPause, modifier = Modifier.size(58.dp)) {
-                    Icon(if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow, null)
-                }
-                IconButton(onClick = {}) { Icon(Icons.Default.SkipNext, null, tint = Color.White) }
-                IconButton(onClick = onMute) {
-                    Icon(if (isMuted) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp, null, tint = Color.White)
+                Spacer(Modifier.height(14.dp))
+                WaveformVisualizer(
+                    isPlaying = isPlaying,
+                    modifier = Modifier.fillMaxWidth().height(70.dp)
+                )
+                Spacer(Modifier.height(16.dp))
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(
+                        24.dp,
+                        Alignment.CenterHorizontally
+                    ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    FilledIconButton(onClick = onPlayPause, modifier = Modifier.size(64.dp)) {
+                        Icon(
+                            if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                            null,
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
+                    IconButton(onClick = onMute) {
+                        Icon(
+                            if (isMuted) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp,
+                            null,
+                            tint = Color.White,
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
                 }
             }
         }
@@ -288,7 +421,14 @@ private fun StationRow(station: Station, selected: Boolean, onClick: () -> Unit)
             .background(if (selected) Color(0xFF26385F) else Color(0xFF101A2E)).padding(14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(Icons.Default.MusicNote, null, tint = Color(0xFF9B5CFF))
+        AsyncImage(
+            model = station.logoUrl,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp).clip(CircleShape),
+            contentScale = ContentScale.Crop,
+            error = rememberVectorPainter(Icons.Default.MusicNote),
+            fallback = rememberVectorPainter(Icons.Default.MusicNote)
+        )
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {
             Text(
@@ -306,16 +446,6 @@ private fun StationRow(station: Station, selected: Boolean, onClick: () -> Unit)
             )
         }
         if (selected) Text("ON", color = Color(0xFF9B5CFF), fontWeight = FontWeight.Bold)
-    }
-}
-
-@Composable
-private fun BottomNav() {
-    Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.SpaceAround) {
-        Icon(Icons.Default.Home, null, tint = Color(0xFF9B5CFF))
-        Icon(Icons.Default.Search, null, tint = Color(0xFF8E99B6))
-        Icon(Icons.Default.Favorite, null, tint = Color(0xFF8E99B6))
-        Icon(Icons.Default.MoreHoriz, null, tint = Color(0xFF8E99B6))
     }
 }
 

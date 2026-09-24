@@ -48,7 +48,8 @@ data class Station(
     val id: String,
     val name: String,
     val streamUrl: String,
-    val genre: String
+    val genre: String,
+    val logoUrl: String? = null
 )
 
 /**
