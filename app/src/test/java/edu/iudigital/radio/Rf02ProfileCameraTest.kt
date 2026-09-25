@@ -7,7 +7,7 @@ import org.junit.Test
 
 /**
  * RF-02 — Perfil con cámara (TakePicturePreview).
- * ROJO: Product.profileCamera() lanza NotImplementedError hasta el PR de Hardware.
+ * VERDE: Product.profileCamera() expone ProfileCameraImpl (Hardware).
  */
 class Rf02ProfileCameraTest {
 

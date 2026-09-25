@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Solucion a los problemas de reproduccion de emisoras que eran bloqueadas ya que android bloquea las emisoras que transmiten por http:// -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

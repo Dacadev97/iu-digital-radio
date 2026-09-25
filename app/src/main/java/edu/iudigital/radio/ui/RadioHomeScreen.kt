@@ -12,6 +12,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -28,72 +30,144 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import edu.iudigital.radio.api.Product
+import edu.iudigital.radio.api.Station
+import edu.iudigital.radio.api.StationCatalog
+import edu.iudigital.radio.audio.ExoRadioSession
 import edu.iudigital.radio.hardware.AndroidHapticPort
-
-private data class UiStation(val id: String, val name: String, val genre: String)
-
-private val stations = listOf(
-    UiStation("iu-live", "IU Digital Radio", "Institucional"),
-    UiStation("campus-pop", "Campus Pop", "Pop"),
-    UiStation("rock-classic", "Rock Clasico", "Rock"),
-    UiStation("frecuencia-urbana", "Frecuencia Urbana", "Urbana"),
-    UiStation("electro-night", "Electro Night", "Electronica")
-)
+import edu.iudigital.radio.network.StationRepository
+import androidx.compose.ui.platform.LocalInspectionMode
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
+import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
 fun RadioHomeScreen() {
     val context = LocalContext.current
+    val isPreview = LocalInspectionMode.current //Evita instanciar ExoPlayer en la vista previa de Compose (Layoutlib) pasando null
+    // como contexto cuando LocalInspectionMode.current es true, previniendo el
+    // NullPointerException de AudioCapabilities que veíamos en el Preview.
     val haptic = remember { AndroidHapticPort(context) }
-    val session = remember { Product.radioSession(haptic) }
+    val session = remember { Product.radioSession(haptic, if (isPreview) null else context) }
+    val repository = remember { StationRepository() } // "remember" evita crear un StationRepository nuevo en cada re renderizado de la pantalla
 
-    var selectedId by rememberSaveable { mutableStateOf(stations.first().id) }
-    val selected = stations.first { it.id == selectedId }
+    var stations by remember { mutableStateOf<List<Station>>(emptyList()) }
+    var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    val selected = stations.firstOrNull { it.id == selectedId }
 
     // Mantener estación seleccionada sincronizada con el contrato RF-04.
     LaunchedEffect(Unit) {
-        session.selectStation(selectedId)
+        try {
+            val fetched = repository.fetchStations()
+            stations = fetched
+            session.updateStations(fetched)
+            val firstId = fetched.firstOrNull()?.id
+            selectedId = firstId
+            firstId?.let { session.selectStation(it) }
+        } catch (e: Exception) {
+            stations = StationCatalog.defaults
+            session.updateStations(StationCatalog.defaults)
+            selectedId = StationCatalog.defaults.firstOrNull()?.id
+        errorMessage = "No se pudo conectar a Radio Browser. Mostrando catálogo local."
+        } finally {
+            // "finally" se ejecuta pase lo que pase (éxito o error)
+            isLoading = false
+        }
     }
 
-    Surface(color = Color(0xFF07111F), modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize().padding(20.dp)) {
-            TopBar()
-            Spacer(Modifier.height(18.dp))
-            UserProfileBanner()
-            Spacer(Modifier.height(18.dp))
-            ProfileHeader()
-            Spacer(Modifier.height(18.dp))
-            PlayerCard(
-                station = selected,
-                isPlaying = session.isPlaying,
-                isMuted = session.isMuted,
-                onPlayPause = {
-                    if (session.isPlaying) session.pause() else session.play()
-                },
-                onMute = { session.toggleMute() }
-            )
-            Spacer(Modifier.height(18.dp))
-            Text("Estaciones", color = Color.White, fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(10.dp))
-            LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                items(stations) { station ->
-                    StationRow(station, station.id == selectedId) {
-                        selectedId = station.id
-                        session.selectStation(station.id)
+    DisposableEffect(Unit) {
+        onDispose {
+            (session as? ExoRadioSession)?.release()
+        }
+    }
+
+    // Ahora todo el contenido vive en UN SOLO LazyColumn (con scroll real de punta a
+    // punta) y el BottomNav queda fijo abajo gracias a Scaffold(bottomBar = ...).
+    Scaffold(
+        containerColor = Color(0xFF07111F),
+        bottomBar = { BottomNav() }
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp)
+        ) {
+            item { TopBar() }
+            item { UserProfileBanner() }
+            item { ProfileHeader(selected?.name ?: "Cargando...") }
+
+            errorMessage?.let { message ->
+                item { Text(message, color = Color(0xFFFF6B6B)) }
+            }
+
+            when {
+                isLoading -> item {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(40.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = Color(0xFF9B5CFF))
+                    }
+                }
+                selected != null -> {
+                    item {
+                        PlayerCard(
+                            station = selected,
+                            isPlaying = session.isPlaying,
+                            isMuted = session.isMuted,
+                            onPlayPause = {
+                                if (session.isPlaying) session.pause() else session.play()
+                            },
+                            onMute = { session.toggleMute() }
+                        )
+                    }
+                    item { Text("Estaciones", color = Color.White, fontWeight = FontWeight.Bold) }
+                    items(stations) { station ->
+                        StationRow(station, station.id == selectedId) {
+                            selectedId = station.id
+                            session.selectStation(station.id)
+                        }
                     }
                 }
             }
-            BottomNav()
         }
     }
 }
 
 @Composable
 private fun UserProfileBanner() {
+    val context = LocalContext.current
     val camera = remember { Product.profileCamera() }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
+
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
         // Cancelar (null) no debe crashear ni marcar foto.
         if (bitmap != null) {
             camera.onPreviewCaptured(bitmap)
+        }
+    }
+
+    // FIX bug cámara: TakePicturePreview abre la cámara del sistema, pero sin el
+    // permiso CAMERA concedido en tiempo de ejecución, la app de cámara se cerraba
+    // sola y regresaba al escritorio (típico en MIUI/Xiaomi). Este segundo launcher
+    // pide el permiso primero; solo si el usuario acepta, ahí sí se abre la cámara.
+    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) cameraLauncher.launch()
+    }
+
+    fun onCameraClick() {
+        val hasPermission = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (hasPermission) {
+            cameraLauncher.launch()
+        } else {
+            permissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
 
@@ -111,7 +185,7 @@ private fun UserProfileBanner() {
                     .size(50.dp)
                     .clip(CircleShape)
                     .background(Color(0xFF26385F))
-                    .clickable { launcher.launch() },
+                    .clickable { onCameraClick() },
                 contentAlignment = Alignment.Center
             ) {
                 val avatar = camera.avatarBitmap
@@ -157,7 +231,7 @@ private fun TopBar() {
 }
 
 @Composable
-private fun ProfileHeader() {
+private fun ProfileHeader(stationName: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Box(
             contentAlignment = Alignment.Center,
@@ -166,7 +240,7 @@ private fun ProfileHeader() {
         Spacer(Modifier.width(14.dp))
         Column {
             Text("Ahora en vivo", color = Color(0xFFB8C1D9))
-            Text("IU Digital Radio", color = Color.White, fontWeight = FontWeight.Bold)
+            Text(stationName, color = Color.White, fontWeight = FontWeight.Bold)
             Text("Tu musica, siempre contigo", color = Color(0xFF8E99B6))
         }
     }
@@ -174,7 +248,7 @@ private fun ProfileHeader() {
 
 @Composable
 private fun PlayerCard(
-    station: UiStation,
+    station: Station,
     isPlaying: Boolean,
     isMuted: Boolean,
     onPlayPause: () -> Unit,
@@ -200,7 +274,7 @@ private fun PlayerCard(
                 }
                 IconButton(onClick = {}) { Icon(Icons.Default.SkipNext, null, tint = Color.White) }
                 IconButton(onClick = onMute) {
-                    Icon(if (isMuted) Icons.Default.VolumeOff else Icons.Default.VolumeUp, null, tint = Color.White)
+                    Icon(if (isMuted) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp, null, tint = Color.White)
                 }
             }
         }
@@ -208,7 +282,7 @@ private fun PlayerCard(
 }
 
 @Composable
-private fun StationRow(station: UiStation, selected: Boolean, onClick: () -> Unit) {
+private fun StationRow(station: Station, selected: Boolean, onClick: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).clickable(onClick = onClick)
             .background(if (selected) Color(0xFF26385F) else Color(0xFF101A2E)).padding(14.dp),
@@ -217,8 +291,19 @@ private fun StationRow(station: UiStation, selected: Boolean, onClick: () -> Uni
         Icon(Icons.Default.MusicNote, null, tint = Color(0xFF9B5CFF))
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {
-            Text(station.name, color = Color.White, fontWeight = FontWeight.SemiBold)
-            Text(station.genre, color = Color(0xFF8E99B6))
+            Text(
+                station.name,
+                color = Color.White,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                station.genre,
+                color = Color(0xFF8E99B6),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
         if (selected) Text("ON", color = Color(0xFF9B5CFF), fontWeight = FontWeight.Bold)
     }

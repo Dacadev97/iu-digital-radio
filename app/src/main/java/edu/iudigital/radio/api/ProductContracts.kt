@@ -1,9 +1,8 @@
 package edu.iudigital.radio.api
 
+import android.content.Context
 import android.graphics.Bitmap
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
+import edu.iudigital.radio.audio.ExoRadioSession
 import edu.iudigital.radio.hardware.ProfileCameraImpl
 
 /**
@@ -41,6 +40,7 @@ interface RadioSession {
     fun pause()
     fun toggleMute()
     fun selectStation(stationId: String)
+    fun updateStations(stations: List<Station>)
 }
 
 /** RF-06 / RF-07 — modelo de emisora (sin catálogo poblado). */
@@ -48,7 +48,7 @@ data class Station(
     val id: String,
     val name: String,
     val streamUrl: String,
-    val genre: String = "General"
+    val genre: String
 )
 
 /**
@@ -97,31 +97,6 @@ object Product {
     fun profileCamera(): ProfileCamera =
         ProfileCameraImpl()
 
-    fun radioSession(haptic: HapticPort = HapticPort { }): RadioSession =
-        RadioSessionImpl(haptic)
-}
-
-class RadioSessionImpl(private val haptic: HapticPort) : RadioSession {
-    override var isPlaying: Boolean by mutableStateOf(false)
-    override var isMuted: Boolean by mutableStateOf(false)
-    override var selectedStationId: String? by mutableStateOf(null)
-
-    override fun play() {
-        isPlaying = true
-        haptic.tick()
-    }
-
-    override fun pause() {
-        isPlaying = false
-        haptic.tick()
-    }
-
-    override fun toggleMute() {
-        isMuted = !isMuted
-        haptic.tick()
-    }
-
-    override fun selectStation(stationId: String) {
-        selectedStationId = stationId
-    }
+    fun radioSession(haptic: HapticPort = HapticPort { }, context: Context? = null): RadioSession =
+        ExoRadioSession(haptic, context)
 }
