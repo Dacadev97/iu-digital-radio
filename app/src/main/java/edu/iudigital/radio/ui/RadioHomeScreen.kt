@@ -85,6 +85,8 @@ fun RadioHomeScreen() {
             val firstId = fetched.firstOrNull()?.id
             selectedId = firstId
             firstId?.let { session.selectStation(it) }
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
         } catch (e: Exception) {
             stations = StationCatalog.defaults
             session.updateStations(StationCatalog.defaults)
@@ -256,7 +258,10 @@ private fun TopBar(
     var isSearchExpanded by remember { mutableStateOf(false) }
 
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-        IconButton(onClick = { isSearchExpanded = !isSearchExpanded }) {
+        IconButton(onClick = {
+            isSearchExpanded = !isSearchExpanded
+            if (!isSearchExpanded) onSearchQueryChange("")
+        }) {
             Icon(Icons.Default.Search, null, tint = Color.White)
         }
 
