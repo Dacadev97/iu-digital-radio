@@ -20,7 +20,8 @@ class StationRepository {
                 id = dto.stationUuid,
                 name = dto.name,
                 streamUrl = dto.urlResolved,
-                genre = dto.tags?.split(",")?.firstOrNull()?.trim()?.replaceFirstChar { it.uppercase() } ?: "General"
+                genre = dto.tags?.split(",")?.firstOrNull()?.trim()?.replaceFirstChar { it.uppercase() } ?: "General",
+                logoUrl = dto.favicon?.takeIf { it.isNotBlank() }
             ) //Este es el nuevo objeto Station que construimos y agregamos al basicamente es List<Station>
         }
     }

@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- Solucion a los problemas de reproduccion de emisoras que eran bloqueadas ya que android bloquea las emisoras que transmiten por http:// -->
+<!-- Solucion a los problemas de reproduccion de emisoras que eran bloqueadas ya que android bloquea las emisoras que transmiten por http://
+     Las estaciones vienen de Radio Browser (directorio global) con streamUrl dinamico,
+     por lo que no se puede acotar el cleartext a una lista fija de dominios de streaming.
+     Sí acotamos nuestro propio host de API para que ese, al menos, nunca baje a HTTP. -->
 <network-security-config>
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">de1.api.radio-browser.info</domain>
+    </domain-config>
     <base-config cleartextTrafficPermitted="true" />
 </network-security-config>
